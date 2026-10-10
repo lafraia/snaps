@@ -84,6 +84,8 @@ Local builds are signed with your Apple Development certificate if you have one,
 
 The release script generates an Xcode project from `project.yml` (needs `brew install xcodegen`). It archives the app, then exports it with Developer ID signing and has Xcode submit it to Apple's notary service, using the account you're signed into in Xcode. Once notarization passes, it staples the ticket, verifies the app with Gatekeeper, and packages `Snaps-<version>.dmg`, `Snaps-<version>.zip` and `SHA256SUMS.txt` into `build/release`.
 
+The DMG opens to a custom installer window: a branded background, the app and an Applications shortcut side by side, and the Snaps volume icon. It's built with [dmgbuild](https://github.com/dmgbuild/dmgbuild), which the script installs into `build/.venv`. The layout lives in `Resources/dmg/settings.py`. The background is rendered from `promo/dmg-background.html` with `npm run dmg-background`, and `npm run dmg-preview` shows it with mock icons in light and dark mode.
+
 Bump `CFBundleShortVersionString` and `CFBundleVersion` in `Resources/Info.plist` before each release.
 
 ## Project layout
@@ -109,7 +111,8 @@ Scripts/
   make-banner.swift      renders assets/banner.jpg
 project.yml              XcodeGen project definition (used for releases)
 docs/                    GitHub Pages site (index.html, promo video, assets)
-promo/                   promo video source (promo.html) + renderer (render.mjs)
+promo/                   promo video + DMG background sources and renderers
+Resources/dmg/           installer DMG layout (settings.py) + background
 assets/
   icon.svg               logo / app icon source
   banner.jpg             README + social preview banner

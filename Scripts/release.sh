@@ -80,13 +80,17 @@ xcrun stapler validate "$APP" >/dev/null
 spctl --assess --type exec "$APP"
 
 echo "→ Packaging"
-rm -rf "$OUT" build/dmg
-mkdir -p "$OUT" build/dmg
+rm -rf "$OUT"
+mkdir -p "$OUT"
 ditto -c -k --sequesterRsrc --keepParent "$APP" "$OUT/Snaps-$VERSION.zip"
-ditto "$APP" build/dmg/Snaps.app
-ln -s /Applications build/dmg/Applications
-hdiutil create -volname "Snaps $VERSION" -srcfolder build/dmg -ov -format UDZO -fs APFS \
-  "$OUT/Snaps-$VERSION.dmg" >/dev/null 2>&1
+
+# Styled installer DMG (background, icon layout, volume icon) via dmgbuild.
+if [[ ! -x build/.venv/bin/dmgbuild ]]; then
+  python3 -m venv build/.venv
+  build/.venv/bin/pip install --quiet dmgbuild
+fi
+build/.venv/bin/dmgbuild -s Resources/dmg/settings.py -D app="$APP" \
+  "Snaps $VERSION" "$OUT/Snaps-$VERSION.dmg" >/dev/null 2>&1
 (cd "$OUT" && shasum -a 256 "Snaps-$VERSION.dmg" "Snaps-$VERSION.zip" > SHA256SUMS.txt)
 
 echo "✓ Snaps $VERSION is signed, notarized and packaged in $OUT"

@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Snaps — DMG background</title>
+<!--
+  Background for the installer window (660×420 pt). Rendered at 1x and 2x by
+  `npm run dmg-background`. Icon centers must match Resources/dmg/settings.py:
+  Snaps.app at (170, 210), Applications at (490, 210).
+  Add ?preview to overlay mock icons and labels for checking legibility.
+-->
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 660px; height: 420px; overflow: hidden; }
+  body {
+    position: relative; color: white;
+    font-family: ui-rounded, "SF Pro Rounded", -apple-system, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    background:
+      radial-gradient(320px 260px at 8% 0%, rgba(103, 232, 249, 0.75), transparent 70%),
+      radial-gradient(380px 300px at 100% 10%, rgba(167, 139, 250, 0.7), transparent 70%),
+      radial-gradient(420px 300px at 50% 115%, rgba(30, 27, 110, 0.85), transparent 70%),
+      linear-gradient(160deg, #3b82f6, #4f46e5 60%, #4338ca);
+  }
+  .dots { position: absolute; inset: 0;
+    background-image: radial-gradient(rgba(255,255,255,0.10) 1px, transparent 1.3px); background-size: 22px 22px;
+    mask-image: linear-gradient(180deg, black, transparent 85%); }
+  .sheen { position: absolute; inset: 0; background: radial-gradient(520px 160px at 50% -20px, rgba(255,255,255,0.32), transparent 70%); }
+
+  h1 { position: absolute; top: 34px; width: 100%; text-align: center; font-size: 25px; font-weight: 800; letter-spacing: -0.4px;
+    text-shadow: 0 2px 12px rgba(20, 20, 80, 0.35); }
+  .sub { position: absolute; top: 70px; width: 100%; text-align: center; font-size: 13.5px; font-weight: 600; color: rgba(255,255,255,0.82); }
+
+  /* Glass slots behind the two icons. */
+  .slot { position: absolute; width: 176px; height: 196px; border-radius: 34px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0.07));
+    border: 1px solid rgba(255,255,255,0.42);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.55), 0 18px 40px rgba(20, 16, 90, 0.35); }
+  .slot.app { left: calc(170px - 88px); top: calc(210px - 84px); }
+  .slot.apps { left: calc(490px - 88px); top: calc(210px - 84px); }
+  /* Mid-tone band under the labels so Finder's white (dark mode) and black (light mode) text both read. */
+  .slot::after { content: ""; position: absolute; left: 14px; right: 14px; bottom: 12px; height: 26px; border-radius: 13px;
+    background: rgba(118, 132, 196, 0.92); }
+
+  /* Arrow */
+  .arrow { position: absolute; left: 280px; top: 186px; width: 100px; height: 48px; }
+
+  .hint { position: absolute; left: 50%; bottom: 46px; transform: translateX(-50%); white-space: nowrap;
+    padding: 8px 14px; border-radius: 999px; font-size: 12px; font-weight: 600;
+    background: rgba(15, 18, 60, 0.38); border: 1px solid rgba(255,255,255,0.22); color: rgba(255,255,255,0.92); }
+  .hint b { font-weight: 800; color: white; }
+  .foot { position: absolute; bottom: 18px; width: 100%; text-align: center; font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.6); letter-spacing: 0.2px; }
+
+  /* Preview-only mock of what Finder draws on top. */
+  .mock { display: none; position: absolute; width: 128px; height: 128px; }
+  .mock-label { display: none; position: absolute; width: 160px; text-align: center; font: 500 13px -apple-system, system-ui; }
+  body.preview .mock, body.preview .mock-label { display: block; }
+</style>
+</head>
+<body>
+  <div class="dots"></div>
+  <div class="sheen"></div>
+
+  <h1>Install Snaps</h1>
+  <div class="sub">Drag Snaps into your Applications folder</div>
+
+  <div class="slot app"></div>
+  <div class="slot apps"></div>
+
+  <svg class="arrow" viewBox="0 0 100 48" fill="none">
+    <defs>
+      <linearGradient id="ag" gradientUnits="userSpaceOnUse" x1="6" y1="24" x2="82" y2="24"><stop offset="0" stop-color="#ffffff" stop-opacity="0.35"/><stop offset="1" stop-color="#ffffff"/></linearGradient>
+    </defs>
+    <path d="M6 24 H82" stroke="url(#ag)" stroke-width="6" stroke-linecap="round" stroke-dasharray="0.1 13"/>
+    <path d="M70 10 L88 24 L70 38" stroke="white" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+
+  <div class="hint">✦ After installing, open Snaps and <b>allow Screen Recording</b> when asked</div>
+  <div class="foot">Free &amp; open source · nearbycoder.github.io/snaps</div>
+
+  <!-- Mock Finder icons/labels (only with ?preview) -->
+  <img class="mock" src="../assets/icon.svg" style="left:106px;top:146px">
+  <div class="mock mock-folder" style="left:426px;top:146px;border-radius:12px;background:linear-gradient(180deg,#7cc8ff,#2f8ef0)"></div>
+  <div class="mock-label" id="l1" style="left:90px;top:284px">Snaps</div>
+  <div class="mock-label" id="l2" style="left:410px;top:284px">Applications</div>
+  <script>
+    const q = location.search;
+    if (q.includes("preview")) {
+      document.body.classList.add("preview");
+      const color = q.includes("light") ? "black" : "white";
+      document.getElementById("l1").style.color = color;
+      document.getElementById("l2").style.color = color;
+    }
+  </script>
+</body>
+</html>
