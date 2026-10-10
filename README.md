@@ -1,4 +1,6 @@
-<img src="assets/icon.svg" width="64" height="64" alt="">
+<p align="center">
+  <img src="assets/banner.jpg" alt="Snaps: screenshots that land on your clipboard" width="100%">
+</p>
 
 # Snaps
 
@@ -73,6 +75,9 @@ Sources/Snaps/
   StatusBar.swift        menu bar item + glass popover
   SettingsView.swift     settings window + shortcut recorder
 Scripts/
-  build.sh               build/sign/install script
-  make-icon.swift        renders the app icon
+  build.sh               build/sign/install script (renders the app icon from assets/icon.svg)
+  make-banner.swift      renders assets/banner.jpg
+assets/
+  icon.svg               logo / app icon source
+  banner.jpg             README + social preview banner
 ```

@@ -35,11 +35,16 @@ mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 cp build/Snaps "$APP/Contents/MacOS/Snaps"
 cp Resources/Info.plist "$APP/Contents/Info.plist"
 
-if [[ ! -f Resources/AppIcon.icns ]]; then
+# The app icon is rendered from assets/icon.svg whenever the SVG changes.
+if [[ ! -f Resources/AppIcon.icns || assets/icon.svg -nt Resources/AppIcon.icns ]]; then
   echo "→ Rendering app icon"
   ICONSET="build/AppIcon.iconset"
   rm -rf "$ICONSET"
-  xcrun swift Scripts/make-icon.swift "$ICONSET" >/dev/null
+  mkdir -p "$ICONSET"
+  for size in 16 32 128 256 512; do
+    sips -s format png -z "$size" "$size" assets/icon.svg --out "$ICONSET/icon_${size}x${size}.png" >/dev/null
+    sips -s format png -z $((size * 2)) $((size * 2)) assets/icon.svg --out "$ICONSET/icon_${size}x${size}@2x.png" >/dev/null
+  done
   iconutil -c icns "$ICONSET" -o Resources/AppIcon.icns
 fi
 cp Resources/AppIcon.icns "$APP/Contents/Resources/AppIcon.icns"
