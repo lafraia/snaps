@@ -8,6 +8,14 @@ A tiny native macOS menu bar app for screenshots, with a Liquid Glass look.
 
 Every capture goes straight to your clipboard and appears as a floating preview in the corner of your choice, so you can paste it with ⌘V or drag it into any app.
 
+## Install
+
+1. Download the latest **Snaps-x.y.z.dmg** from [Releases](https://github.com/nearbycoder/snaps/releases/latest).
+2. Open it and drag **Snaps** into **Applications**.
+3. Launch Snaps and allow **Screen Recording** when asked (System Settings → Privacy & Security → Screen & System Audio Recording), then relaunch it.
+
+Requires macOS 26 or later. Releases are signed with a Developer ID and notarized by Apple.
+
 ## Shortcuts
 
 | Capture | Default | What it does |
@@ -39,7 +47,7 @@ Press ⌃⇧G, or click **Gallery** in the menu bar popover. A glass strip drops
 
 The gallery keeps your last 60 captures. Unsaved captures are cleaned up after 7 days; anything saved to a folder stays in the gallery as long as the file exists.
 
-## Build and run
+## Build from source
 
 Requires macOS 26 or later.
 
@@ -55,7 +63,18 @@ The script compiles with `swiftc` directly. It works with just the Command Line 
 
 On first launch macOS asks for **Screen Recording** access. Grant it in System Settings → Privacy & Security → Screen & System Audio Recording, then relaunch Snaps. Without it, captures only contain your wallpaper.
 
-The build is ad-hoc signed unless an Apple Development certificate is available, or you set `SIGN_IDENTITY`. With ad-hoc signing, macOS may ask for the permission again after each rebuild. Installing once to `/Applications` and leaving that copy alone avoids this.
+Local builds are signed with your Apple Development certificate if you have one, otherwise ad-hoc; set `SIGN_IDENTITY` to override. With ad-hoc signing, macOS may ask for the permission again after each rebuild.
+
+## Releasing
+
+```sh
+./Scripts/release.sh           # archive, sign with Developer ID, notarize, package
+./Scripts/release.sh publish   # ...and publish a GitHub release for the version
+```
+
+The release script generates an Xcode project from `project.yml` (needs `brew install xcodegen`). It archives the app, then exports it with Developer ID signing and has Xcode submit it to Apple's notary service, using the account you're signed into in Xcode. Once notarization passes, it staples the ticket, verifies the app with Gatekeeper, and packages `Snaps-<version>.dmg`, `Snaps-<version>.zip` and `SHA256SUMS.txt` into `build/release`.
+
+Bump `CFBundleShortVersionString` and `CFBundleVersion` in `Resources/Info.plist` before each release.
 
 ## Project layout
 
@@ -75,8 +94,10 @@ Sources/Snaps/
   StatusBar.swift        menu bar item + glass popover
   SettingsView.swift     settings window + shortcut recorder
 Scripts/
-  build.sh               build/sign/install script (renders the app icon from assets/icon.svg)
+  build.sh               local build/sign/install script (renders the app icon from assets/icon.svg)
+  release.sh             Developer ID + notarized release builds
   make-banner.swift      renders assets/banner.jpg
+project.yml              XcodeGen project definition (used for releases)
 assets/
   icon.svg               logo / app icon source
   banner.jpg             README + social preview banner

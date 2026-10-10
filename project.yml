@@ -1,0 +1,31 @@
+# Xcode project definition. Generate Snaps.xcodeproj with: xcodegen generate
+name: Snaps
+options:
+  bundleIdPrefix: dev.nearby
+  deploymentTarget:
+    macOS: "26.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    DEVELOPMENT_TEAM: 4F2YLTHL8T
+    CODE_SIGN_STYLE: Automatic
+    ENABLE_HARDENED_RUNTIME: YES
+    MACOSX_DEPLOYMENT_TARGET: "26.0"
+targets:
+  Snaps:
+    type: application
+    platform: macOS
+    sources:
+      - path: Sources/Snaps
+      - path: Resources/AppIcon.icns
+        buildPhase: resources
+    settings:
+      base:
+        PRODUCT_NAME: Snaps
+        PRODUCT_BUNDLE_IDENTIFIER: dev.nearby.Snaps
+        INFOPLIST_FILE: Resources/Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        CODE_SIGN_IDENTITY: "Apple Development"
+        ENABLE_APP_SANDBOX: NO
+        COMBINE_HIDPI_IMAGES: YES
