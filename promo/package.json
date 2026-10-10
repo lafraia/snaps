@@ -8,7 +8,8 @@
     "stills": "node render.mjs --stills 2,5.3,8.6,10.5,15,19.8,26.3,29.8,31.6,36.6,40",
     "dmg-background": "node render-dmg-background.mjs",
     "dmg-preview": "node render-dmg-background.mjs --preview",
-    "audio": "node audio.mjs"
+    "audio": "node audio.mjs",
+    "og": "node render-og.mjs"
   },
   "devDependencies": {
     "playwright-core": "^1.56.0"

@@ -132,7 +132,7 @@ npm run audio    # just the soundtrack → promo/build/promo-audio.wav
 npm run render   # soundtrack + video → docs/assets/promo.mp4 + promo-poster.jpg (1080p60, AAC)
 ```
 
-Open `promo/promo.html` in a browser to watch it play live.
+Open `promo/promo.html` in a browser to watch it play live. The site's 1200×630 social card (`docs/assets/og.png`) is rendered from `promo/og.html` with `npm run og`.
 
 ## License
 
