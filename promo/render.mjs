@@ -82,3 +82,14 @@ await new Promise((resolve, reject) => {
   mux.on("close", (code) => (code === 0 ? resolve() : reject(new Error(`ffmpeg exited ${code}`))));
 });
 console.log(`✓ ${final}`);
+
+// Cache-bust the site's references so browsers fetch the new video/poster.
+const { createHash } = await import("node:crypto");
+const { readFileSync } = await import("node:fs");
+const indexPath = join(here, "..", "docs", "index.html");
+const hash = (f) => createHash("sha256").update(readFileSync(f)).digest("hex").slice(0, 10);
+const html = readFileSync(indexPath, "utf8")
+  .replace(/assets\/promo\.mp4(\?v=[\w]+)?/g, `assets/promo.mp4?v=${hash(final)}`)
+  .replace(/assets\/promo-poster\.jpg(\?v=[\w]+)?/g, `assets/promo-poster.jpg?v=${hash(join(outDir, "promo-poster.jpg"))}`);
+writeFileSync(indexPath, html);
+console.log("✓ docs/index.html cache-busted");
