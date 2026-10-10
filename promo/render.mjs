@@ -43,7 +43,8 @@ if (stillsArg !== -1) {
 }
 
 mkdirSync(outDir, { recursive: true });
-const output = join(outDir, "promo.mp4");
+const output = join(here, "build", "promo-video.mp4");
+mkdirSync(join(here, "build"), { recursive: true });
 const ffmpeg = spawn("ffmpeg", [
   "-y", "-loglevel", "error",
   "-f", "image2pipe", "-framerate", String(FPS), "-i", "-",
@@ -62,9 +63,22 @@ ffmpeg.stdin.end();
 await new Promise((r) => ffmpeg.on("close", r));
 
 // Poster frame for the web page.
-const poster = await frameAt(31.4);
+const poster = await frameAt(39.4);
 const { writeFileSync } = await import("node:fs");
 writeFileSync(join(outDir, "promo-poster.jpg"), poster);
 
 await browser.close();
-console.log(`✓ ${output}`);
+
+// Mux in the synthesized soundtrack (npm run audio), loudness-normalized for the web.
+const audio = join(here, "build", "promo-audio.wav");
+const final = join(outDir, "promo.mp4");
+await new Promise((resolve, reject) => {
+  const mux = spawn("ffmpeg", [
+    "-y", "-loglevel", "error", "-i", output, "-i", audio,
+    "-map", "0:v", "-map", "1:a", "-c:v", "copy",
+    "-af", "loudnorm=I=-16:TP=-1.5:LRA=11", "-c:a", "aac", "-b:a", "160k", "-ar", "48000",
+    "-shortest", "-movflags", "+faststart", final,
+  ], { stdio: "inherit" });
+  mux.on("close", (code) => (code === 0 ? resolve() : reject(new Error(`ffmpeg exited ${code}`))));
+});
+console.log(`✓ ${final}`);

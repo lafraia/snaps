@@ -27,7 +27,9 @@ final class PermissionGuide {
 
         if panel == nil {
             let panel = GlassPanel(contentSize: Self.panelSize)
-            panel.onCancel = { [weak self] in self?.stop() }
+            // Never steal focus: System Settings may need the keyboard for a password prompt.
+            panel.allowsKeyFocus = false
+            panel.becomesKeyOnlyIfNeeded = true
             panel.setContent(
                 PermissionGuideView(
                     model: model,

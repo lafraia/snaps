@@ -123,12 +123,13 @@ assets/
 
 The site in `docs/` is served by GitHub Pages at https://nearbycoder.github.io/snaps/.
 
-The promo video is an HTML/CSS animation (`promo/promo.html`) rendered frame by frame with headless Chrome and ffmpeg:
+The promo video is an HTML/CSS animation (`promo/promo.html`) rendered frame by frame with headless Chrome and ffmpeg. Its soundtrack (music bed plus UI sound effects) is synthesized by `promo/audio.mjs`, so there are no third-party samples, and timed to the same timeline:
 
 ```sh
 cd promo && npm install
 npm run stills   # PNG stills of key moments → promo/stills
-npm run render   # docs/assets/promo.mp4 + promo-poster.jpg (1080p60)
+npm run audio    # just the soundtrack → promo/build/promo-audio.wav
+npm run render   # soundtrack + video → docs/assets/promo.mp4 + promo-poster.jpg (1080p60, AAC)
 ```
 
 Open `promo/promo.html` in a browser to watch it play live.

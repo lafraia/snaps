@@ -222,6 +222,57 @@
   .key { min-width: 58px; height: 58px; padding: 0 14px; border-radius: 14px; display: grid; place-items: center; font: 600 26px var(--rounded); color: #141827;
     background: linear-gradient(180deg, #ffffff, #e9ecf4); box-shadow: 0 4px 0 #b9bfd0, 0 8px 16px rgba(0,0,0,0.25); }
 
+
+  /* ---------- Install scene ---------- */
+  #install { opacity: 0; }
+  #install .wp { position: absolute; inset: 0;
+    background:
+      radial-gradient(700px 520px at 12% 18%, #7dd3fc 0%, transparent 70%),
+      radial-gradient(900px 700px at 85% 15%, #a78bfa 0%, transparent 70%),
+      radial-gradient(900px 700px at 70% 95%, #6366f1 0%, transparent 70%),
+      radial-gradient(800px 600px at 10% 95%, #22d3ee 0%, transparent 70%),
+      linear-gradient(160deg, #60a5fa, #4f46e5); }
+  #dmgWin { left: 640px; top: 304px; width: 640px; height: 432px; border-radius: 14px; overflow: hidden; transform-origin: 50% 50%;
+    box-shadow: 0 40px 90px rgba(15, 23, 60, 0.5), 0 0 0 1px rgba(0,0,0,0.25); background: #2b2930; }
+  #dmgWin .bar { height: 32px; display: flex; align-items: center; padding: 0 14px; gap: 8px; background: #2b2930; color: rgba(255,255,255,0.75); font: 600 13px var(--font); }
+  #dmgWin .bar .ttl { position: absolute; left: 0; right: 0; text-align: center; pointer-events: none; display: flex; justify-content: center; align-items: center; gap: 6px; }
+  #dmgWin iframe { position: absolute; left: 0; top: 32px; width: 640px; height: 430px; border: 0; }
+  .dmg-icon { position: absolute; width: 128px; height: 128px; }
+  .dmg-label { position: absolute; width: 160px; text-align: center; font: 500 13px var(--font); color: white; }
+  #folderHl { position: absolute; left: 412px; top: 150px; width: 136px; height: 136px; border-radius: 22px; background: rgba(0,0,0,0.22); opacity: 0; }
+
+  #ssWin { left: 520px; top: 110px; width: 880px; height: 600px; background: white; }
+  .ss-side { position: absolute; left: 0; top: 0; bottom: 0; width: 240px; background: #f1f1f4; border-right: 1px solid #e3e3e8; padding: 52px 12px 0; }
+  .ss-side .lights { position: absolute; left: 18px; top: 18px; }
+  .ss-search { height: 30px; border-radius: 8px; background: #e4e4ea; color: #9a9aa5; font-size: 13px; display: flex; align-items: center; padding: 0 10px; margin-bottom: 14px; }
+  .ss-item { display: flex; align-items: center; gap: 10px; height: 32px; padding: 0 8px; border-radius: 8px; font-size: 13.5px; color: #26262c; }
+  .ss-item i { width: 22px; height: 22px; border-radius: 6px; display: block; }
+  .ss-item.on { background: #3478f6; color: white; font-weight: 600; }
+  .ss-pane { position: absolute; left: 240px; top: 0; right: 0; bottom: 0; padding: 0 24px; }
+  .ss-head { height: 52px; display: flex; align-items: center; gap: 12px; font-size: 15px; font-weight: 700; color: #1d1d22; }
+  .ss-head span { color: #9a9aa5; font-weight: 400; font-size: 20px; }
+  .ss-desc { font-size: 13px; color: #6e6e78; line-height: 1.45; height: 70px; }
+  .ss-group { position: relative; border-radius: 12px; background: #f6f6f9; border: 1px solid #e6e6ec; overflow: hidden; }
+  .ss-row { height: 52px; display: flex; align-items: center; gap: 12px; padding: 0 16px; font-size: 14px; color: #1d1d22; border-top: 1px solid #e9e9ee; background: #f6f6f9; }
+  .ss-row:first-child { border-top: 0; }
+  .ss-row .app { width: 30px; height: 30px; border-radius: 8px; }
+  .toggle { margin-left: auto; width: 42px; height: 25px; border-radius: 13px; background: #dcdce2; position: relative; }
+  .toggle b { position: absolute; top: 2px; left: 2px; width: 21px; height: 21px; border-radius: 50%; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.25); display: block; }
+  .toggle.on { background: #34c759; } .toggle.on b { left: 19px; }
+  .ss-tools { display: flex; gap: 2px; margin-top: 10px; }
+  .ss-tools i { width: 26px; height: 22px; border-radius: 6px; background: #ececf1; color: #555; font: 600 15px var(--font); font-style: normal; display: grid; place-items: center; }
+  #ssNewRow { height: 0; opacity: 0; overflow: hidden; }
+  #ssDrop { position: absolute; inset: 0; border-radius: 12px; box-shadow: inset 0 0 0 3px #3478f6; background: rgba(52,120,246,0.06); opacity: 0; }
+
+  #guideCard { left: 684px; top: 726px; width: 460px; height: 104px; border-radius: 26px; transform-origin: 50% 0; color: #16182a; opacity: 0;
+    background: rgba(255,255,255,0.58); display: flex; align-items: center; gap: 16px; padding: 0 18px; }
+  #guideCard .gtxt b { display: block; font-size: 14.5px; }
+  #guideCard .gtxt small { display: block; font-size: 12px; color: #5a6075; margin-top: 3px; }
+  #guideCard .trail { margin-left: auto; margin-right: 6px; }
+  .round { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.9); color: #3478f6; font-weight: 800; }
+  .relaunch { height: 32px; padding: 0 14px; border-radius: 16px; background: #3478f6; color: white; font: 700 13px var(--font); display: flex; align-items: center; white-space: nowrap; }
+  #insGhost { width: 128px; height: 128px; opacity: 0; }
+
   /* Cursor */
   #cursor { left: 0; top: 0; width: 0; height: 0; z-index: 50; }
   #cursor svg { position: absolute; display: none; }
@@ -287,6 +338,66 @@
     <div id="winC" class="abs window">
       <div id="weatherSlot"></div>
       <div class="highlight" id="hlC"></div>
+    </div>
+
+
+    <!-- ================= INSTALL SCENE ================= -->
+    <div id="install" class="layer">
+      <div class="wp"></div>
+      <div id="dmgWin" class="abs">
+        <div class="bar"><div class="lights"><i></i><i></i><i></i></div><div class="ttl"><img src="../assets/icon.svg" width="15" height="15" alt="">Snaps 1.1.0</div></div>
+        <iframe src="dmg-background.html" scrolling="no"></iframe>
+        <div id="folderHl"></div>
+        <img class="dmg-icon" id="dmgApp" src="../assets/icon.svg" style="left:96px;top:154px" alt="">
+        <svg class="dmg-icon" style="left:416px;top:154px" viewBox="0 0 128 128">
+          <defs><linearGradient id="ffold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8ad0ff"/><stop offset="1" stop-color="#3d9ced"/></linearGradient></defs>
+          <path d="M10 34a8 8 0 0 1 8-8h30l9 8h53a8 8 0 0 1 8 8v6H10z" fill="#55acef"/>
+          <rect x="10" y="42" width="108" height="70" rx="9" fill="url(#ffold)"/>
+          <g fill="none" stroke="#2a7fd0" stroke-width="5" stroke-linecap="round" opacity=".75"><path d="M64 58 50 96M64 58l14 38M47 85h34"/></g>
+          <circle cx="24" cy="104" r="12" fill="#f5f5f7" stroke="rgba(0,0,0,.15)"/><path d="M19 109l9-9m-6 0h6v6" stroke="#1d1d22" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div class="dmg-label" style="left:80px;top:290px">Snaps</div>
+        <div class="dmg-label" style="left:400px;top:290px">Applications</div>
+      </div>
+
+      <div id="ssWin" class="abs window">
+        <div class="ss-side">
+          <div class="lights"><i></i><i></i><i></i></div>
+          <div class="ss-search">🔍&nbsp; Search</div>
+          <div class="ss-item"><i style="background:#3478f6"></i>Wi‑Fi</div>
+          <div class="ss-item"><i style="background:#3478f6"></i>Bluetooth</div>
+          <div class="ss-item"><i style="background:#3478f6"></i>Network</div>
+          <div class="ss-item"><i style="background:#ff3b30"></i>Notifications</div>
+          <div class="ss-item"><i style="background:#ff2d55"></i>Sound</div>
+          <div class="ss-item"><i style="background:#5856d6"></i>Focus</div>
+          <div class="ss-item"><i style="background:#8e8e93"></i>General</div>
+          <div class="ss-item"><i style="background:#1d1d22"></i>Appearance</div>
+          <div class="ss-item on"><i style="background:white;opacity:.9"></i>Privacy &amp; Security</div>
+          <div class="ss-item"><i style="background:#1d1d22"></i>Desktop &amp; Dock</div>
+        </div>
+        <div class="ss-pane">
+          <div class="ss-head"><span>‹</span>Screen &amp; System Audio Recording</div>
+          <div class="ss-desc">Allow the applications below to record the content of your screen and audio, even while using other applications.</div>
+          <div class="ss-group" id="ssGroup">
+            <div class="ss-row"><div class="app" style="background:linear-gradient(135deg,#34d399,#059669)"></div>Huddle<div class="toggle on"><b></b></div></div>
+            <div class="ss-row"><div class="app" style="background:linear-gradient(135deg,#fb7185,#e11d48)"></div>Recorder<div class="toggle"><b></b></div></div>
+            <div class="ss-row" id="ssNewRow"><img class="app" src="../assets/icon.svg" alt="">Snaps<div class="toggle" id="ssToggle"><b></b></div></div>
+            <div id="ssDrop"></div>
+          </div>
+          <div class="ss-tools"><i>+</i><i>−</i></div>
+        </div>
+      </div>
+
+      <div id="guideCard" class="abs glass">
+        <img id="gcIcon" src="../assets/icon.svg" width="60" height="60" alt="">
+        <div id="gcCheck" style="display:none;width:60px;height:60px;border-radius:50%;background:#34c759;color:white;font:800 34px var(--font);place-items:center">✓</div>
+        <div class="gtxt"><b id="gcTitle">Drag Snaps into the list above</b><small id="gcSub">Drop it into Screen &amp; System Audio Recording, then turn on its switch.</small></div>
+        <div class="trail" id="gcTrail"><div class="round" id="gcArrow">↑</div></div>
+      </div>
+
+      <img id="insGhost" class="abs" src="../assets/icon.svg" alt="">
+      <div id="icap0" class="abs caption glass"><div><div class="lbl">Install</div><div class="ttl">Drag Snaps into Applications</div></div></div>
+      <div id="icap1" class="abs caption glass"><div><div class="lbl">Screen Recording</div><div class="ttl">One drag to allow it. No digging around.</div></div></div>
     </div>
 
     <!-- Menu bar -->
@@ -568,7 +679,7 @@ function cursorAt(t) {
 const inside = (p, x, y, w, h) => p.x >= x && p.x <= x + w && p.y >= y && p.y <= y + h;
 
 // ---------- Frame ----------
-function renderAt(t) {
+function renderMain(t, T) {
   // Intro
   const introOut = prog(t, 3.0, 0.8, E.inOut);
   set($("intro"), { opacity: 1 - introOut, transform: `scale(${1 + introOut * 0.08})` });
@@ -723,7 +834,104 @@ function renderAt(t) {
   set($("ripple"), { left: cur.x - 23 + "px", top: cur.y - 23 + "px", opacity: ripple, transform: `scale(${rs})` });
 }
 
-window.DURATION = 34;
+
+// ---------- Install scene (absolute time T) ----------
+const INSTALL = { start: 3.0, end: 12.0, freeze: 4.0 };
+const INSTALL_SHIFT = INSTALL.end - INSTALL.freeze; // main timeline resumes at 4.0 when T = 12.0
+const mainTime = (T) => (T < INSTALL.freeze ? T : T < INSTALL.end ? INSTALL.freeze : T - INSTALL_SHIFT);
+
+const DMG_SCALE = 1.3;
+const dmgPt = (lx, ly) => ({ x: 960 + (lx - 320) * DMG_SCALE, y: 520 + (ly - 216) * DMG_SCALE });
+const DMG_APP = dmgPt(160, 218), DMG_APPS = dmgPt(480, 218);
+const CARD_ICON = { x: 684 + 48 * 1.2, y: 726 + 52 * 1.2 };
+const SS_DROP = { x: 1080, y: 330 }, SS_TOGGLE = { x: 1339, y: 362 };
+const INSTALL_CURSOR = [
+  [3.7, 1300, 860], [4.65, DMG_APP.x, DMG_APP.y], [4.85, DMG_APP.x, DMG_APP.y], [5.9, DMG_APPS.x, DMG_APPS.y],
+  [7.1, DMG_APPS.x, DMG_APPS.y], [7.85, CARD_ICON.x, CARD_ICON.y], [8.05, CARD_ICON.x, CARD_ICON.y],
+  [9.0, SS_DROP.x, SS_DROP.y], [9.15, SS_DROP.x, SS_DROP.y], [9.7, SS_TOGGLE.x, SS_TOGGLE.y],
+  [10.7, SS_TOGGLE.x, SS_TOGGLE.y], [11.9, 1520, 820],
+];
+function pathAt(path, t) {
+  if (t <= path[0][0]) return { x: path[0][1], y: path[0][2] };
+  for (let i = 1; i < path.length; i++) {
+    const [t1, x1, y1] = path[i];
+    if (t <= t1) {
+      const [t0, x0, y0] = path[i - 1];
+      const k = E.inOut((t - t0) / (t1 - t0));
+      const arc = Math.sin(k * Math.PI) * Math.min(60, Math.hypot(x1 - x0, y1 - y0) * 0.08);
+      return { x: lerp(x0, x1, k), y: lerp(y0, y1, k) - arc };
+    }
+  }
+  const l = path[path.length - 1];
+  return { x: l[1], y: l[2] };
+}
+
+function renderInstall(T) {
+  const layerIn = prog(T, 2.95, 0.5, E.out) * (1 - prog(T, 11.35, 0.6, E.inOut));
+  set($("install"), { opacity: layerIn, display: layerIn > 0 ? "block" : "none" });
+  if (layerIn <= 0) return false;
+
+  // Installer window
+  const dIn = prog(T, 3.25, 0.6, E.back), dOut = prog(T, 6.3, 0.4, E.in);
+  set($("dmgWin"), { opacity: Math.min(1, prog(T, 3.25, 0.3)) * (1 - dOut), transform: `scale(${DMG_SCALE * (0.9 + 0.1 * Math.min(1.05, dIn)) * (1 - dOut * 0.06)})` });
+  const overFolder = T >= 5.55 && T < 5.95;
+  set($("folderHl"), { opacity: overFolder ? 1 : 0 });
+
+  // System Settings + docked guide card
+  const sIn = prog(T, 6.5, 0.5, E.back);
+  set($("ssWin"), { opacity: Math.min(1, prog(T, 6.5, 0.3)), transform: `scale(${0.94 + 0.06 * Math.min(1.03, sIn)})` });
+  const cIn = prog(T, 6.95, 0.5, E.quint);
+  set($("guideCard"), { opacity: cIn, transform: `translateY(${(1 - cIn) * 24}px) scale(1.2)` });
+  set($("ssDrop"), { opacity: T >= 8.6 && T < 9.05 ? 1 : 0 });
+  const row = prog(T, 9.05, 0.35, E.quint);
+  set($("ssNewRow"), { height: 52 * row + "px", opacity: row });
+  $("ssToggle").classList.toggle("on", T >= 9.85);
+  set($("ssToggle").firstElementChild, { left: (2 + 17 * prog(T, 9.8, 0.18, E.out)) + "px" });
+  set($("ssToggle"), { background: T >= 9.85 ? "#34c759" : "#dcdce2" });
+
+  const stage = T < 9.05 ? 0 : T < 9.9 ? 1 : 2;
+  $("gcTitle").textContent = ["Drag Snaps into the list above", "Now switch Snaps on", "Screen Recording is on"][stage];
+  $("gcSub").textContent = ["Drop it into Screen & System Audio Recording, then turn on its switch.",
+    "Flip the switch next to Snaps in the list.", "Relaunch Snaps to start capturing."][stage];
+  set($("gcIcon"), { display: stage === 2 ? "none" : "block", transform: `translateY(${stage === 0 ? Math.sin(T * 3) * 3 : 0}px)`, opacity: T >= 8.05 && T < 9.05 ? 0.35 : 1 });
+  set($("gcCheck"), { display: stage === 2 ? "grid" : "none", transform: `scale(${0.6 + 0.4 * prog(T, 9.9, 0.4, E.back)})` });
+  $("gcTrail").innerHTML = stage === 2 ? `<div class="relaunch">↻ Relaunch Snaps</div>`
+    : `<div class="round">${stage === 0 ? "↑" : "⏻"}</div>`;
+  if (stage === 0) set($("gcTrail").firstElementChild, { transform: `translateY(${-Math.abs(Math.sin(T * 2.6)) * 6}px)` });
+
+  // Captions
+  for (const [id, a, b] of [["icap0", 3.9, 6.6], ["icap1", 6.85, 11.3]]) {
+    const k = prog(T, a, 0.45, E.quint) * (1 - prog(T, b - 0.35, 0.35, E.in));
+    set($(id), { opacity: k, transform: `translateX(-50%) translateY(${(1 - k) * 22}px)` });
+  }
+
+  // Cursor + drag ghost
+  const cur = pathAt(INSTALL_CURSOR, T);
+  const dragging1 = T >= 4.85 && T < 5.95, dragging2 = T >= 8.05 && T < 9.05;
+  const drop1 = prog(T, 5.95, 0.2, E.in), drop2 = prog(T, 9.05, 0.2, E.in);
+  const ghostOn = (T >= 4.85 && T < 6.15) || (T >= 8.05 && T < 9.25);
+  const drop = T < 7 ? drop1 : drop2;
+  const size = T < 7 ? 128 * DMG_SCALE : 60 * 1.2;
+  set($("insGhost"), { opacity: ghostOn ? 0.85 * (1 - drop) : 0, left: cur.x - size / 2 + "px", top: cur.y - size / 2 + "px", width: size + "px", height: size + "px", transform: `scale(${1 - drop * 0.4})` });
+
+  const showCursor = T >= 3.7 && T < 12.0;
+  if (showCursor) {
+    const type = dragging1 || dragging2 ? "grab" : "arrow";
+    for (const n of ["arrow", "cross", "cam", "grab"]) $("cur-" + n).style.display = n === type ? "block" : "none";
+    const press = (T >= 9.8 && T < 9.92) || dragging1 || dragging2;
+    set($("cursor"), { left: cur.x + "px", top: cur.y + "px", opacity: prog(T, 3.7, 0.3), transform: `scale(${press ? 0.88 : 1})` });
+    const r = T >= 9.8 && T < 10.25 ? (T - 9.8) / 0.45 : null;
+    set($("ripple"), { left: cur.x - 23 + "px", top: cur.y - 23 + "px", opacity: r === null ? 0 : 0.8 * (1 - r), transform: `scale(${r === null ? 1 : 0.4 + r})` });
+  }
+  return showCursor;
+}
+
+function renderAt(T) {
+  renderMain(mainTime(T), T);
+  renderInstall(T);
+}
+
+window.DURATION = 42;
 window.renderAt = renderAt;
 window.addEventListener("load", () => {
   buildCursorPath();

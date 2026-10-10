@@ -14,7 +14,7 @@ const browser = await chromium.launch({ channel: "chrome", headless: true, args:
 if (process.argv.includes("--preview")) {
   mkdirSync(join(here, "stills"), { recursive: true });
   for (const mode of ["dark", "light"]) {
-    const page = await browser.newPage({ viewport: { width: 660, height: 420 }, deviceScaleFactor: 2 });
+    const page = await browser.newPage({ viewport: { width: 640, height: 430 }, deviceScaleFactor: 2 });
     await page.goto(`${url}?preview-${mode}`);
     await page.screenshot({ path: join(here, "stills", `dmg-preview-${mode}.png`) });
   }
@@ -22,7 +22,7 @@ if (process.argv.includes("--preview")) {
   const out = join(here, "..", "Resources", "dmg");
   mkdirSync(out, { recursive: true });
   for (const scale of [1, 2]) {
-    const page = await browser.newPage({ viewport: { width: 660, height: 420 }, deviceScaleFactor: scale });
+    const page = await browser.newPage({ viewport: { width: 640, height: 430 }, deviceScaleFactor: scale });
     await page.goto(url);
     await page.screenshot({ path: join(out, scale === 1 ? "background.png" : "background@2x.png") });
   }

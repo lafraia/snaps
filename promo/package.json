@@ -4,10 +4,11 @@
   "type": "module",
   "description": "Renders the Snaps promo video and DMG installer background",
   "scripts": {
-    "render": "node render.mjs",
-    "stills": "node render.mjs --stills 2,5.4,7,8.8,11.8,15.8,18.3,21.8,23.6,27.9,28.6,32.5",
+    "render": "node audio.mjs && node render.mjs",
+    "stills": "node render.mjs --stills 2,5.3,8.6,10.5,15,19.8,26.3,29.8,31.6,36.6,40",
     "dmg-background": "node render-dmg-background.mjs",
-    "dmg-preview": "node render-dmg-background.mjs --preview"
+    "dmg-preview": "node render-dmg-background.mjs --preview",
+    "audio": "node audio.mjs"
   },
   "devDependencies": {
     "playwright-core": "^1.56.0"

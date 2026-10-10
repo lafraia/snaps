@@ -1,7 +1,7 @@
 # dmgbuild settings for the Snaps installer window.
 # Usage: dmgbuild -s Resources/dmg/settings.py -D app=path/to/Snaps.app "Snaps 1.0.0" Snaps-1.0.0.dmg
-# The background (660×420) is rendered from promo/dmg-background.html; keep icon
-# positions in sync with the glass slots drawn there.
+# The background is rendered from promo/dmg-background.html; keep icon positions in
+# sync with the glows drawn there.
 import os.path
 
 here = os.path.dirname(os.path.abspath(globals().get("__file__", "Resources/dmg/settings.py")))
@@ -21,7 +21,8 @@ icon = os.path.join(os.path.dirname(here), "AppIcon.icns")  # volume icon
 
 # Window
 background = os.path.join(here, "background.tiff")
-window_rect = ((200, 140), (660, 420))
+# Finder's window bounds include the title bar, so add its height to the 400 pt content.
+window_rect = ((200, 140), (640, 432))
 default_view = "icon-view"
 show_status_bar = False
 show_tab_view = False
@@ -36,6 +37,6 @@ text_size = 13
 label_pos = "bottom"
 arrange_by = None
 icon_locations = {
-    app_name: (170, 210),
-    "Applications": (490, 210),
+    app_name: (160, 186),
+    "Applications": (480, 186),
 }

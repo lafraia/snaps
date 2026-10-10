@@ -313,6 +313,8 @@ final class PreviewController {
 /// Borderless, non-activating glass panel that floats above other windows (and the menu bar) on every Space.
 final class GlassPanel: NSPanel {
     var onCancel: (() -> Void)?
+    /// Panels that never need typing (e.g. the permission guide) shouldn't take keyboard focus from other apps.
+    var allowsKeyFocus = true
 
     init(contentSize: NSSize) {
         super.init(
@@ -333,7 +335,7 @@ final class GlassPanel: NSPanel {
         animationBehavior = .none
     }
 
-    override var canBecomeKey: Bool { true }
+    override var canBecomeKey: Bool { allowsKeyFocus }
     override var canBecomeMain: Bool { false }
 
     // Allow the panel to sit over the menu bar.
