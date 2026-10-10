@@ -4,7 +4,7 @@
 
 <p align="center">
   <a href="https://nearbycoder.github.io/snaps/"><b>Website</b></a> ·
-  <a href="https://github.com/nearbycoder/snaps/releases/latest"><b>Download</b></a> ·
+  <a href="https://github.com/nearbycoder/snaps/releases/latest/download/Snaps.dmg"><b>Download for macOS</b></a> ·
   <a href="https://nearbycoder.github.io/snaps/#top"><b>Watch the demo</b></a>
 </p>
 
@@ -16,7 +16,7 @@ Every capture goes straight to your clipboard and appears as a floating preview 
 
 ## Install
 
-1. Download the latest **Snaps-x.y.z.dmg** from [Releases](https://github.com/nearbycoder/snaps/releases/latest).
+1. **[Download Snaps.dmg](https://github.com/nearbycoder/snaps/releases/latest/download/Snaps.dmg)** (always the latest version; older builds are on the [Releases](https://github.com/nearbycoder/snaps/releases) page).
 2. Open it and drag **Snaps** into **Applications**.
 3. Launch Snaps. It opens System Settings with a card you can drag Snaps from into the **Screen Recording** list. Switch it on and relaunch.
 
@@ -82,7 +82,7 @@ Local builds are signed with your Apple Development certificate if you have one,
 ./Scripts/release.sh publish   # ...and publish a GitHub release for the version
 ```
 
-The release script generates an Xcode project from `project.yml` (needs `brew install xcodegen`). It archives the app, then exports it with Developer ID signing and has Xcode submit it to Apple's notary service, using the account you're signed into in Xcode. Once notarization passes, it staples the ticket, verifies the app with Gatekeeper, and packages `Snaps-<version>.dmg`, `Snaps-<version>.zip` and `SHA256SUMS.txt` into `build/release`.
+The release script generates an Xcode project from `project.yml` (needs `brew install xcodegen`). It archives the app, then exports it with Developer ID signing and has Xcode submit it to Apple's notary service, using the account you're signed into in Xcode. Once notarization passes, it staples the ticket, verifies the app with Gatekeeper, and packages `Snaps-<version>.dmg`, `Snaps.dmg` (the same file, for the stable latest-download link), `Snaps-<version>.zip` and `SHA256SUMS.txt` into `build/release`.
 
 The DMG opens to a custom installer window: a branded background, the app and an Applications shortcut side by side, and the Snaps volume icon. It's built with [dmgbuild](https://github.com/dmgbuild/dmgbuild), which the script installs into `build/.venv`. The layout lives in `Resources/dmg/settings.py`. The background is rendered from `promo/dmg-background.html` with `npm run dmg-background`, and `npm run dmg-preview` shows it with mock icons in light and dark mode.
 

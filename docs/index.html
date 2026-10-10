@@ -245,7 +245,7 @@
         <a href="#faq">FAQ</a>
         <a href="https://github.com/nearbycoder/snaps">GitHub</a>
       </div>
-      <a class="btn btn-primary btn-sm js-download" href="https://github.com/nearbycoder/snaps/releases/latest">Download</a>
+      <a class="btn btn-primary btn-sm js-download" href="https://github.com/nearbycoder/snaps/releases/latest/download/Snaps.dmg">Download</a>
     </div>
   </nav>
 
@@ -255,7 +255,7 @@
     <h1>Screenshots that land on <span class="grad">your clipboard.</span></h1>
     <p class="lede">Snaps is a tiny menu bar app for macOS. Press a shortcut, grab an area, a window or the whole screen, then paste it anywhere. A glass preview floats in the corner so you can drag it straight into any app.</p>
     <div class="cta">
-      <a class="btn btn-primary btn-lg js-download" href="https://github.com/nearbycoder/snaps/releases/latest">
+      <a class="btn btn-primary btn-lg js-download" href="https://github.com/nearbycoder/snaps/releases/latest/download/Snaps.dmg">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10.5l5 5 5-5M5 20h14"/></svg>
         <span class="js-download-label">Download for macOS</span>
       </a>
@@ -425,7 +425,7 @@
     <img src="assets/icon.svg" alt="">
     <h2>Give your screenshots a shortcut.</h2>
     <div class="cta">
-      <a class="btn btn-primary btn-lg js-download" href="https://github.com/nearbycoder/snaps/releases/latest">
+      <a class="btn btn-primary btn-lg js-download" href="https://github.com/nearbycoder/snaps/releases/latest/download/Snaps.dmg">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10.5l5 5 5-5M5 20h14"/></svg>
         <span class="js-download-label">Download for macOS</span>
       </a>
@@ -450,7 +450,8 @@
     fetch("https://api.github.com/repos/nearbycoder/snaps/releases/latest")
       .then((r) => (r.ok ? r.json() : Promise.reject()))
       .then((release) => {
-        const dmg = (release.assets || []).find((a) => a.name.endsWith(".dmg"));
+        const assets = release.assets || [];
+        const dmg = assets.find((a) => /^Snaps-.+\.dmg$/.test(a.name)) || assets.find((a) => a.name.endsWith(".dmg"));
         if (!dmg) return;
         const version = release.tag_name.replace(/^v/, "");
         document.querySelectorAll(".js-download").forEach((a) => (a.href = dmg.browser_download_url));

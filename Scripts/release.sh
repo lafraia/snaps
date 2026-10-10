@@ -90,8 +90,10 @@ if [[ ! -x build/.venv/bin/dmgbuild ]]; then
   build/.venv/bin/pip install --quiet dmgbuild
 fi
 build/.venv/bin/dmgbuild -s Resources/dmg/settings.py -D app="$APP" \
-  "Snaps $VERSION" "$OUT/Snaps-$VERSION.dmg" >/dev/null 2>&1
-(cd "$OUT" && shasum -a 256 "Snaps-$VERSION.dmg" "Snaps-$VERSION.zip" > SHA256SUMS.txt)
+  "Snaps" "$OUT/Snaps-$VERSION.dmg" >/dev/null 2>&1
+# Version-less copy so …/releases/latest/download/Snaps.dmg always points at the newest build.
+cp "$OUT/Snaps-$VERSION.dmg" "$OUT/Snaps.dmg"
+(cd "$OUT" && shasum -a 256 "Snaps-$VERSION.dmg" "Snaps.dmg" "Snaps-$VERSION.zip" > SHA256SUMS.txt)
 
 echo "✓ Snaps $VERSION is signed, notarized and packaged in $OUT"
 
@@ -103,8 +105,10 @@ if [[ "$ACTION" == "publish" ]]; then
   [[ -n "${RELEASE_NOTES:-}" ]] && NOTES_ARGS=(--notes-file "$RELEASE_NOTES")
   gh release create "$TAG" \
     "$OUT/Snaps-$VERSION.dmg" \
+    "$OUT/Snaps.dmg" \
     "$OUT/Snaps-$VERSION.zip" \
     "$OUT/SHA256SUMS.txt" \
     --title "Snaps $VERSION" \
+    --latest \
     "${NOTES_ARGS[@]}"
 fi
