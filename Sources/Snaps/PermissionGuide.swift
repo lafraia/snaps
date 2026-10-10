@@ -9,7 +9,7 @@ final class PermissionGuide {
     static let shared = PermissionGuide()
 
     private static let settingsBundleID = "com.apple.systempreferences"
-    private static let panelSize = NSSize(width: 460, height: 104)
+    private static let panelSize = NSSize(width: 340, height: 50)
 
     private let model = PermissionGuideModel()
     private var panel: GlassPanel?
@@ -37,7 +37,7 @@ final class PermissionGuide {
                     onRelaunch: { ScreenPermission.relaunch() },
                     onClose: { [weak self] in self?.stop() }
                 ),
-                cornerRadius: 26
+                cornerRadius: 25
             )
             panel.alphaValue = 0
             self.panel = panel
@@ -114,7 +114,7 @@ final class PermissionGuide {
         let screen = NSScreen.screens.first { $0.frame.intersects(window) } ?? NSScreen.main
         let visible = screen?.visibleFrame ?? window
         let x = min(max(window.midX - size.width / 2, visible.minX + 8), visible.maxX - size.width - 8)
-        var y = window.minY - size.height - 14
+        var y = window.minY - size.height - 10
         if y < visible.minY + 8 {
             y = window.minY + 16
         }
@@ -155,34 +155,49 @@ struct PermissionGuideView: View {
     let onClose: () -> Void
 
     var body: some View {
-        HStack(spacing: 16) {
-            icon
-            VStack(alignment: .leading, spacing: 3) {
+        ZStack {
+            HStack(spacing: 10) {
+                icon
                 Text(title)
-                    .font(.system(size: 14.5, weight: .semibold))
-                Text(subtitle)
-                    .font(.system(size: 12))
-                    .foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
+                    .font(.system(size: 13, weight: .semibold))
+                    .lineLimit(1)
+                Spacer(minLength: 0)
+                trailing
+                Color.clear.frame(width: 18, height: 18) // room for the close button
             }
-            Spacer(minLength: 0)
-            trailing
+
+            // The whole pill is the drag handle (until permission is granted).
+            if model.stage != .granted {
+                DragSource(
+                    fileURL: Bundle.main.bundleURL,
+                    image: NSApp.applicationIconImage,
+                    inset: 0,
+                    onHover: { _ in },
+                    onClick: nil,
+                    onDoubleClick: {},
+                    onDragStart: {},
+                    onDragEnd: { dropped in if dropped { onDropped() } },
+                    dragImageSize: 64
+                )
+                .help(hint)
+            }
+
+            HStack {
+                Spacer()
+                Button(action: onClose) {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 9, weight: .bold))
+                        .frame(width: 18, height: 18)
+                        .contentShape(Circle())
+                }
+                .buttonStyle(.plain)
+                .foregroundStyle(.secondary)
+                .help("Close")
+            }
         }
-        .padding(.leading, 18)
-        .padding(.trailing, 14)
+        .padding(.leading, 9)
+        .padding(.trailing, 12)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .overlay(alignment: .topTrailing) {
-            Button(action: onClose) {
-                Image(systemName: "xmark")
-                    .font(.system(size: 9, weight: .bold))
-                    .frame(width: 20, height: 20)
-                    .contentShape(Circle())
-            }
-            .buttonStyle(.plain)
-            .foregroundStyle(.secondary)
-            .padding(8)
-            .help("Close")
-        }
     }
 
     private var title: String {
@@ -193,10 +208,10 @@ struct PermissionGuideView: View {
         }
     }
 
-    private var subtitle: String {
+    private var hint: String {
         switch model.stage {
         case .drag: "Drop it into Screen & System Audio Recording, then turn on its switch."
-        case .enable: "Flip the switch next to Snaps in the list. If macOS asks, choose Quit & Reopen."
+        case .enable: "Flip the switch next to Snaps. If macOS asks, choose Quit & Reopen."
         case .granted: "Relaunch Snaps to start capturing."
         }
     }
@@ -205,35 +220,21 @@ struct PermissionGuideView: View {
     private var icon: some View {
         if model.stage == .granted {
             Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: 44))
+                .font(.system(size: 26))
                 .foregroundStyle(.white, .green)
-                .frame(width: 60, height: 60)
+                .frame(width: 34, height: 34)
                 .transition(.scale.combined(with: .opacity))
         } else {
             // Gentle bob so it reads as "pick me up".
             TimelineView(.animation) { context in
                 let t = context.date.timeIntervalSinceReferenceDate
-                let bob = model.stage == .drag ? sin(t * 3) * 3 : 0
-                ZStack {
-                    Image(nsImage: NSApp.applicationIconImage)
-                        .resizable()
-                        .frame(width: 60, height: 60)
-                        .shadow(color: .black.opacity(0.25), radius: 6, y: 3)
-                    DragSource(
-                        fileURL: Bundle.main.bundleURL,
-                        image: NSApp.applicationIconImage,
-                        inset: 0,
-                        onHover: { _ in },
-                        onClick: nil,
-                        onDoubleClick: {},
-                        onDragStart: {},
-                        onDragEnd: { dropped in if dropped { onDropped() } }
-                    )
-                }
-                .frame(width: 60, height: 60)
-                .offset(y: bob)
+                let bob = model.stage == .drag ? sin(t * 3) * 1.5 : 0
+                Image(nsImage: NSApp.applicationIconImage)
+                    .resizable()
+                    .frame(width: 34, height: 34)
+                    .shadow(color: .black.opacity(0.2), radius: 3, y: 2)
+                    .offset(y: bob)
             }
-            .help("Drag me into the list")
         }
     }
 
@@ -244,26 +245,22 @@ struct PermissionGuideView: View {
             TimelineView(.animation) { context in
                 let t = context.date.timeIntervalSinceReferenceDate
                 Image(systemName: "arrow.up")
-                    .font(.system(size: 18, weight: .bold))
+                    .font(.system(size: 11, weight: .bold))
                     .foregroundStyle(.tint)
-                    .offset(y: -abs(sin(t * 2.6)) * 6)
-                    .frame(width: 34, height: 34)
+                    .offset(y: -abs(sin(t * 2.6)) * 3)
+                    .frame(width: 24, height: 24)
                     .glassEffect(.regular, in: .circle)
             }
-            .padding(.trailing, 18)
         case .enable:
             Image(systemName: "switch.2")
-                .font(.system(size: 16, weight: .semibold))
+                .font(.system(size: 11, weight: .semibold))
                 .foregroundStyle(.tint)
-                .frame(width: 34, height: 34)
+                .frame(width: 24, height: 24)
                 .glassEffect(.regular, in: .circle)
-                .padding(.trailing, 18)
         case .granted:
-            Button(action: onRelaunch) {
-                Label("Relaunch Snaps", systemImage: "arrow.clockwise")
-            }
-            .buttonStyle(.glassProminent)
-            .padding(.trailing, 18)
+            Button("Relaunch", action: onRelaunch)
+                .buttonStyle(.glassProminent)
+                .controlSize(.small)
         }
     }
 }

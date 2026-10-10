@@ -129,6 +129,8 @@ struct DragSource: NSViewRepresentable {
     let onDoubleClick: () -> Void
     let onDragStart: () -> Void
     let onDragEnd: (Bool) -> Void
+    /// When set, the drag image is a square of this size under the cursor instead of the image fitted to the view.
+    var dragImageSize: CGFloat? = nil
 
     func makeNSView(context: Context) -> DragSourceView {
         let view = DragSourceView()
@@ -145,6 +147,7 @@ struct DragSource: NSViewRepresentable {
         view.onDoubleClick = onDoubleClick
         view.onDragStart = onDragStart
         view.onDragEnd = onDragEnd
+        view.dragImageSize = dragImageSize
     }
 }
 
@@ -157,6 +160,7 @@ final class DragSourceView: NSView, NSDraggingSource {
     var onDoubleClick: (() -> Void)?
     var onDragStart: (() -> Void)?
     var onDragEnd: ((Bool) -> Void)?
+    var dragImageSize: CGFloat?
 
     private var mouseDownEvent: NSEvent?
     private var trackingArea: NSTrackingArea?
@@ -206,14 +210,17 @@ final class DragSourceView: NSView, NSDraggingSource {
         mouseDownEvent = nil
 
         let item = NSDraggingItem(pasteboardWriter: fileURL as NSURL)
-        item.setDraggingFrame(dragFrame(), contents: image)
+        item.setDraggingFrame(dragFrame(at: convert(down.locationInWindow, from: nil)), contents: image)
         let session = beginDraggingSession(with: [item], event: down, source: self)
         session.animatesToStartingPositionsOnCancelOrFail = true
         onDragStart?()
     }
 
     /// The image's displayed rect within the card, so the drag image lines up with the thumbnail.
-    private func dragFrame() -> NSRect {
+    private func dragFrame(at point: NSPoint) -> NSRect {
+        if let side = dragImageSize {
+            return NSRect(x: point.x - side / 2, y: point.y - side / 2, width: side, height: side)
+        }
         guard let size = image?.size, size.width > 0, size.height > 0 else { return bounds }
         let inset = bounds.insetBy(dx: inset, dy: inset)
         let scale = min(inset.width / size.width, inset.height / size.height, 1)

@@ -264,13 +264,13 @@
   #ssNewRow { height: 0; opacity: 0; overflow: hidden; }
   #ssDrop { position: absolute; inset: 0; border-radius: 12px; box-shadow: inset 0 0 0 3px #3478f6; background: rgba(52,120,246,0.06); opacity: 0; }
 
-  #guideCard { left: 684px; top: 726px; width: 460px; height: 104px; border-radius: 26px; transform-origin: 50% 0; color: #16182a; opacity: 0;
-    background: rgba(255,255,255,0.58); display: flex; align-items: center; gap: 16px; padding: 0 18px; }
-  #guideCard .gtxt b { display: block; font-size: 14.5px; }
-  #guideCard .gtxt small { display: block; font-size: 12px; color: #5a6075; margin-top: 3px; }
-  #guideCard .trail { margin-left: auto; margin-right: 6px; }
-  .round { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.9); color: #3478f6; font-weight: 800; }
-  .relaunch { height: 32px; padding: 0 14px; border-radius: 16px; background: #3478f6; color: white; font: 700 13px var(--font); display: flex; align-items: center; white-space: nowrap; }
+  #guideCard { left: 790px; top: 722px; width: 340px; height: 50px; border-radius: 25px; transform-origin: 50% 0; color: #16182a; opacity: 0;
+    background: rgba(255,255,255,0.6); display: flex; align-items: center; gap: 10px; padding: 0 12px 0 9px; }
+  #guideCard .gtxt b { display: block; font-size: 13px; white-space: nowrap; }
+  #guideCard .trail { margin-left: auto; }
+  #guideCard .x { font: 800 9px var(--font); color: #8a8fa3; width: 18px; text-align: center; }
+  .round { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; background: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.9); color: #3478f6; font-weight: 800; }
+  .relaunch { height: 24px; padding: 0 11px; border-radius: 12px; background: #3478f6; color: white; font: 700 11.5px var(--font); display: flex; align-items: center; white-space: nowrap; }
   #insGhost { width: 128px; height: 128px; opacity: 0; }
 
   /* Cursor */
@@ -389,10 +389,11 @@
       </div>
 
       <div id="guideCard" class="abs glass">
-        <img id="gcIcon" src="../assets/icon.svg" width="60" height="60" alt="">
-        <div id="gcCheck" style="display:none;width:60px;height:60px;border-radius:50%;background:#34c759;color:white;font:800 34px var(--font);place-items:center">✓</div>
-        <div class="gtxt"><b id="gcTitle">Drag Snaps into the list above</b><small id="gcSub">Drop it into Screen &amp; System Audio Recording, then turn on its switch.</small></div>
+        <img id="gcIcon" src="../assets/icon.svg" width="34" height="34" alt="">
+        <div id="gcCheck" style="display:none;width:30px;height:30px;margin:2px;border-radius:50%;background:#34c759;color:white;font:800 17px var(--font);place-items:center">✓</div>
+        <div class="gtxt"><b id="gcTitle">Drag Snaps into the list above</b></div>
         <div class="trail" id="gcTrail"><div class="round" id="gcArrow">↑</div></div>
+        <div class="x">✕</div>
       </div>
 
       <img id="insGhost" class="abs" src="../assets/icon.svg" alt="">
@@ -843,11 +844,12 @@ const mainTime = (T) => (T < INSTALL.freeze ? T : T < INSTALL.end ? INSTALL.free
 const DMG_SCALE = 1.3;
 const dmgPt = (lx, ly) => ({ x: 960 + (lx - 320) * DMG_SCALE, y: 520 + (ly - 216) * DMG_SCALE });
 const DMG_APP = dmgPt(160, 218), DMG_APPS = dmgPt(480, 218);
-const CARD_ICON = { x: 684 + 48 * 1.2, y: 726 + 52 * 1.2 };
+const CARD_SCALE = 1.25;
+const CARD_GRAB = { x: 960 + (130 - 170) * CARD_SCALE, y: 722 + 25 * CARD_SCALE }; // anywhere on the pill works; grab the text
 const SS_DROP = { x: 1080, y: 330 }, SS_TOGGLE = { x: 1339, y: 362 };
 const INSTALL_CURSOR = [
   [3.7, 1300, 860], [4.65, DMG_APP.x, DMG_APP.y], [4.85, DMG_APP.x, DMG_APP.y], [5.9, DMG_APPS.x, DMG_APPS.y],
-  [7.1, DMG_APPS.x, DMG_APPS.y], [7.85, CARD_ICON.x, CARD_ICON.y], [8.05, CARD_ICON.x, CARD_ICON.y],
+  [7.1, DMG_APPS.x, DMG_APPS.y], [7.85, CARD_GRAB.x, CARD_GRAB.y], [8.05, CARD_GRAB.x, CARD_GRAB.y],
   [9.0, SS_DROP.x, SS_DROP.y], [9.15, SS_DROP.x, SS_DROP.y], [9.7, SS_TOGGLE.x, SS_TOGGLE.y],
   [10.7, SS_TOGGLE.x, SS_TOGGLE.y], [11.9, 1520, 820],
 ];
@@ -881,7 +883,7 @@ function renderInstall(T) {
   const sIn = prog(T, 6.5, 0.5, E.back);
   set($("ssWin"), { opacity: Math.min(1, prog(T, 6.5, 0.3)), transform: `scale(${0.94 + 0.06 * Math.min(1.03, sIn)})` });
   const cIn = prog(T, 6.95, 0.5, E.quint);
-  set($("guideCard"), { opacity: cIn, transform: `translateY(${(1 - cIn) * 24}px) scale(1.2)` });
+  set($("guideCard"), { opacity: cIn * (T >= 8.05 && T < 9.05 ? 0.55 : 1), transform: `translateY(${(1 - cIn) * 24}px) scale(${CARD_SCALE})` });
   set($("ssDrop"), { opacity: T >= 8.6 && T < 9.05 ? 1 : 0 });
   const row = prog(T, 9.05, 0.35, E.quint);
   set($("ssNewRow"), { height: 52 * row + "px", opacity: row });
@@ -891,13 +893,11 @@ function renderInstall(T) {
 
   const stage = T < 9.05 ? 0 : T < 9.9 ? 1 : 2;
   $("gcTitle").textContent = ["Drag Snaps into the list above", "Now switch Snaps on", "Screen Recording is on"][stage];
-  $("gcSub").textContent = ["Drop it into Screen & System Audio Recording, then turn on its switch.",
-    "Flip the switch next to Snaps in the list.", "Relaunch Snaps to start capturing."][stage];
-  set($("gcIcon"), { display: stage === 2 ? "none" : "block", transform: `translateY(${stage === 0 ? Math.sin(T * 3) * 3 : 0}px)`, opacity: T >= 8.05 && T < 9.05 ? 0.35 : 1 });
+  set($("gcIcon"), { display: stage === 2 ? "none" : "block", transform: `translateY(${stage === 0 ? Math.sin(T * 3) * 1.5 : 0}px)` });
   set($("gcCheck"), { display: stage === 2 ? "grid" : "none", transform: `scale(${0.6 + 0.4 * prog(T, 9.9, 0.4, E.back)})` });
-  $("gcTrail").innerHTML = stage === 2 ? `<div class="relaunch">↻ Relaunch Snaps</div>`
+  $("gcTrail").innerHTML = stage === 2 ? `<div class="relaunch">Relaunch</div>`
     : `<div class="round">${stage === 0 ? "↑" : "⏻"}</div>`;
-  if (stage === 0) set($("gcTrail").firstElementChild, { transform: `translateY(${-Math.abs(Math.sin(T * 2.6)) * 6}px)` });
+  if (stage === 0) set($("gcTrail").firstElementChild, { transform: `translateY(${-Math.abs(Math.sin(T * 2.6)) * 3}px)` });
 
   // Captions
   for (const [id, a, b] of [["icap0", 3.9, 6.6], ["icap1", 6.85, 11.3]]) {
@@ -911,7 +911,7 @@ function renderInstall(T) {
   const drop1 = prog(T, 5.95, 0.2, E.in), drop2 = prog(T, 9.05, 0.2, E.in);
   const ghostOn = (T >= 4.85 && T < 6.15) || (T >= 8.05 && T < 9.25);
   const drop = T < 7 ? drop1 : drop2;
-  const size = T < 7 ? 128 * DMG_SCALE : 60 * 1.2;
+  const size = T < 7 ? 128 * DMG_SCALE : 64 * CARD_SCALE;
   set($("insGhost"), { opacity: ghostOn ? 0.85 * (1 - drop) : 0, left: cur.x - size / 2 + "px", top: cur.y - size / 2 + "px", width: size + "px", height: size + "px", transform: `scale(${1 - drop * 0.4})` });
 
   const showCursor = T >= 3.7 && T < 12.0;
