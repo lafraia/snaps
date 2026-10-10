@@ -18,7 +18,7 @@ Every capture goes straight to your clipboard and appears as a floating preview 
 
 1. Download the latest **Snaps-x.y.z.dmg** from [Releases](https://github.com/nearbycoder/snaps/releases/latest).
 2. Open it and drag **Snaps** into **Applications**.
-3. Launch Snaps and allow **Screen Recording** when asked (System Settings → Privacy & Security → Screen & System Audio Recording), then relaunch it.
+3. Launch Snaps. It opens System Settings with a card you can drag Snaps from into the **Screen Recording** list. Switch it on and relaunch.
 
 Requires macOS 26 or later. Releases are signed with a Developer ID and notarized by Apple.
 
@@ -71,7 +71,7 @@ The script compiles with `swiftc` directly. It works with just the Command Line 
 
 ### Screen Recording permission
 
-On first launch macOS asks for **Screen Recording** access. Grant it in System Settings → Privacy & Security → Screen & System Audio Recording, then relaunch Snaps. Without it, captures only contain your wallpaper.
+Snaps needs **Screen Recording** access; without it, captures only contain your wallpaper. On first launch (or from **Set Up Screen Recording** in the menu bar popover), Snaps opens System Settings → Privacy & Security → Screen & System Audio Recording and docks a small glass card to the window. Drag the Snaps icon from the card into the list and switch it on. When the permission comes through, the card offers to relaunch Snaps.
 
 Local builds are signed with your Apple Development certificate if you have one, otherwise ad-hoc; set `SIGN_IDENTITY` to override. With ad-hoc signing, macOS may ask for the permission again after each rebuild.
 
@@ -101,6 +101,7 @@ Sources/Snaps/
   Preview.swift          floating glass preview panels + stacking
   Gallery.swift          top-of-screen gallery strip
   ScreenFollower.swift   moves floating UI to the cursor's display
+  PermissionGuide.swift  drag-to-allow Screen Recording helper docked to System Settings
   CaptureHistory.swift   recent captures store + thumbnail cache
   PreviewCardView.swift  preview UI and drag-out source
   StatusBar.swift        menu bar item + glass popover

@@ -223,7 +223,7 @@ final class DragSourceView: NSView, NSDraggingSource {
     }
 
     func draggingSession(_ session: NSDraggingSession, sourceOperationMaskFor context: NSDraggingContext) -> NSDragOperation {
-        context == .outsideApplication ? [.copy, .generic] : []
+        context == .outsideApplication ? [.copy, .link, .generic] : []
     }
 
     func draggingSession(_ session: NSDraggingSession, endedAt screenPoint: NSPoint, operation: NSDragOperation) {

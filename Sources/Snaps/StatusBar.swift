@@ -168,12 +168,11 @@ struct PermissionBanner: View {
             VStack(alignment: .leading, spacing: 6) {
                 Text("Screen Recording access needed")
                     .font(.system(size: 12, weight: .semibold))
-                Text("Allow Snaps in System Settings, then relaunch it.")
+                Text("Snaps will open System Settings and show you where to drag it.")
                     .font(.system(size: 11))
                     .foregroundStyle(.secondary)
-                Button("Open System Settings") {
-                    ScreenPermission.request()
-                    ScreenPermission.openSystemSettings()
+                Button("Set Up Screen Recording") {
+                    PermissionGuide.shared.start()
                 }
                 .buttonStyle(.glass)
                 .controlSize(.small)

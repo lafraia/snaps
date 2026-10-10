@@ -39,9 +39,11 @@ final class AppCoordinator {
             .store(in: &cancellables)
 
         if !ScreenPermission.isGranted {
-            ScreenPermission.request()
-        }
-        if settings.isFirstLaunch {
+            // Let the menu bar item settle, then guide the user to the permission.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+                PermissionGuide.shared.start()
+            }
+        } else if settings.isFirstLaunch {
             showSettings()
         }
     }

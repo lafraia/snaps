@@ -226,13 +226,35 @@ final class AppState: ObservableObject {
 enum ScreenPermission {
     static var isGranted: Bool { CGPreflightScreenCaptureAccess() }
 
-    static func request() {
-        CGRequestScreenCaptureAccess()
+    /// CGPreflightScreenCaptureAccess only updates after a relaunch. Other apps' window titles are
+    /// hidden without the permission and appear as soon as it's granted, so this reflects changes live.
+    static var isGrantedLive: Bool {
+        if CGPreflightScreenCaptureAccess() { return true }
+        guard let windows = CGWindowListCopyWindowInfo([.optionOnScreenOnly, .excludeDesktopElements], kCGNullWindowID) as? [[String: Any]] else {
+            return false
+        }
+        let me = ProcessInfo.processInfo.processIdentifier
+        return windows.contains { info in
+            guard (info[kCGWindowOwnerPID as String] as? pid_t) != me,
+                  (info[kCGWindowLayer as String] as? Int) == 0,
+                  let title = info[kCGWindowName as String] as? String
+            else { return false }
+            return !title.isEmpty
+        }
     }
 
     static func openSystemSettings() {
         if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture") {
             NSWorkspace.shared.open(url)
         }
+    }
+
+    /// Quits and reopens Snaps so a newly granted permission takes effect.
+    static func relaunch() {
+        let task = Process()
+        task.executableURL = URL(fileURLWithPath: "/bin/sh")
+        task.arguments = ["-c", "sleep 0.8; /usr/bin/open \"$0\"", Bundle.main.bundlePath]
+        try? task.run()
+        NSApp.terminate(nil)
     }
 }
