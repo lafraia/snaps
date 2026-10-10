@@ -2,9 +2,15 @@
   <img src="assets/banner.jpg" alt="Snaps: screenshots that land on your clipboard" width="100%">
 </p>
 
+<p align="center">
+  <a href="https://nearbycoder.github.io/snaps/"><b>Website</b></a> ·
+  <a href="https://github.com/nearbycoder/snaps/releases/latest"><b>Download</b></a> ·
+  <a href="https://nearbycoder.github.io/snaps/#top"><b>Watch the demo</b></a>
+</p>
+
 # Snaps
 
-A tiny native macOS menu bar app for screenshots, with a Liquid Glass look.
+A tiny native macOS menu bar app for screenshots, with a Liquid Glass look. **Free and open source (MIT).**
 
 Every capture goes straight to your clipboard and appears as a floating preview in the corner of your choice, so you can paste it with ⌘V or drag it into any app.
 
@@ -15,6 +21,10 @@ Every capture goes straight to your clipboard and appears as a floating preview 
 3. Launch Snaps and allow **Screen Recording** when asked (System Settings → Privacy & Security → Screen & System Audio Recording), then relaunch it.
 
 Requires macOS 26 or later. Releases are signed with a Developer ID and notarized by Apple.
+
+<p align="center">
+  <a href="https://nearbycoder.github.io/snaps/"><img src="docs/assets/promo-poster.jpg" alt="Watch the Snaps promo video" width="720"></a>
+</p>
 
 ## Shortcuts
 
@@ -98,7 +108,27 @@ Scripts/
   release.sh             Developer ID + notarized release builds
   make-banner.swift      renders assets/banner.jpg
 project.yml              XcodeGen project definition (used for releases)
+docs/                    GitHub Pages site (index.html, promo video, assets)
+promo/                   promo video source (promo.html) + renderer (render.mjs)
 assets/
   icon.svg               logo / app icon source
   banner.jpg             README + social preview banner
 ```
+
+## Website and promo video
+
+The site in `docs/` is served by GitHub Pages at https://nearbycoder.github.io/snaps/.
+
+The promo video is an HTML/CSS animation (`promo/promo.html`) rendered frame by frame with headless Chrome and ffmpeg:
+
+```sh
+cd promo && npm install
+npm run stills   # PNG stills of key moments → promo/stills
+npm run render   # docs/assets/promo.mp4 + promo-poster.jpg (1080p60)
+```
+
+Open `promo/promo.html` in a browser to watch it play live.
+
+## License
+
+[MIT](LICENSE). Snaps is free to use, modify and share.

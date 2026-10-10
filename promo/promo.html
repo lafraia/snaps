@@ -1,0 +1,740 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Snaps — promo</title>
+<style>
+  :root {
+    --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+    --rounded: ui-rounded, "SF Pro Rounded", -apple-system, system-ui, sans-serif;
+    --glass-bg: rgba(255, 255, 255, 0.16);
+    --glass-border: rgba(255, 255, 255, 0.42);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1920px; height: 1080px; overflow: hidden; background: #0b1026; font-family: var(--font); -webkit-font-smoothing: antialiased; }
+  #stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; }
+  .abs { position: absolute; }
+  .layer { position: absolute; inset: 0; }
+
+  .glass {
+    background: var(--glass-bg);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    backdrop-filter: blur(28px) saturate(180%);
+    border: 1px solid var(--glass-border);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.55), inset 0 -1px 0 rgba(255,255,255,0.12), 0 18px 50px rgba(10, 14, 40, 0.35);
+  }
+
+  /* ---------- Intro / outro backdrop ---------- */
+  .night {
+    background:
+      radial-gradient(900px 600px at 18% 8%, rgba(34, 211, 238, 0.28), transparent 70%),
+      radial-gradient(1000px 700px at 88% 100%, rgba(99, 102, 241, 0.42), transparent 70%),
+      radial-gradient(700px 500px at 60% 110%, rgba(59, 130, 246, 0.25), transparent 70%),
+      linear-gradient(145deg, #0b1026, #111a3d 55%, #1a1446);
+  }
+  .dots {
+    background-image: radial-gradient(rgba(255,255,255,0.07) 1.2px, transparent 1.4px);
+    background-size: 32px 32px;
+  }
+  .center-col { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: white; }
+  .wordmark { font-family: var(--rounded); font-weight: 800; font-size: 150px; letter-spacing: -4px; line-height: 1; }
+  .tagline { font-family: var(--rounded); font-weight: 500; font-size: 40px; color: rgba(255,255,255,0.74); }
+  .eyebrow { font-family: var(--rounded); font-weight: 700; font-size: 20px; letter-spacing: 3px; text-transform: uppercase; color: #67e8f9; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 12px;
+    padding: 14px 26px; border-radius: 999px;
+    font-family: var(--rounded); font-weight: 600; font-size: 24px; color: white;
+    background: linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.06));
+    border: 1px solid rgba(255,255,255,0.24);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.3);
+  }
+  .pill .dot { width: 9px; height: 9px; border-radius: 50%; background: #34d399; box-shadow: 0 0 12px #34d399; }
+
+  /* ---------- Desktop ---------- */
+  #wallpaper {
+    background:
+      radial-gradient(700px 520px at 12% 18%, #7dd3fc 0%, transparent 70%),
+      radial-gradient(900px 700px at 85% 15%, #a78bfa 0%, transparent 70%),
+      radial-gradient(900px 700px at 70% 95%, #6366f1 0%, transparent 70%),
+      radial-gradient(800px 600px at 10% 95%, #22d3ee 0%, transparent 70%),
+      linear-gradient(160deg, #60a5fa, #4f46e5);
+  }
+  #wallpaper::after {
+    content: ""; position: absolute; inset: 0;
+    background: radial-gradient(1200px 500px at 50% -10%, rgba(255,255,255,0.35), transparent 70%);
+  }
+
+  #menubar {
+    left: 0; top: 0; width: 1920px; height: 34px;
+    display: flex; align-items: center; padding: 0 18px; gap: 22px;
+    color: white; font-size: 15px; font-weight: 500;
+    background: rgba(255,255,255,0.14);
+    -webkit-backdrop-filter: blur(30px) saturate(180%);
+    backdrop-filter: blur(30px) saturate(180%);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.12);
+  }
+  #menubar .bold { font-weight: 700; }
+  #menubar .right { margin-left: auto; display: flex; align-items: center; gap: 22px; }
+  .mb-icon { width: 20px; height: 20px; display: grid; place-items: center; border-radius: 5px; }
+  .mb-icon.active { background: rgba(255,255,255,0.28); }
+
+  .window {
+    border-radius: 16px; overflow: hidden;
+    box-shadow: 0 30px 80px rgba(15, 23, 60, 0.45), 0 0 0 1px rgba(0,0,0,0.08);
+  }
+  .titlebar { height: 48px; display: flex; align-items: center; gap: 8px; padding: 0 18px; }
+  .lights { display: flex; gap: 8px; }
+  .lights i { width: 13px; height: 13px; border-radius: 50%; display: block; }
+  .lights i:nth-child(1) { background: #ff5f57; } .lights i:nth-child(2) { background: #febc2e; } .lights i:nth-child(3) { background: #28c840; }
+  .highlight { position: absolute; inset: 0; border-radius: 16px; background: rgba(191, 219, 254, 0.42); box-shadow: inset 0 0 0 4px rgba(37, 99, 235, 0.95); opacity: 0; }
+
+  /* Dashboard window */
+  #winA { left: 120px; top: 110px; width: 1020px; height: 660px; background: #f6f7fb; }
+  #winA > .titlebar { background: #eceef4; border-bottom: 1px solid #dfe2ea; }
+  .url { margin: 0 auto; width: 380px; height: 30px; border-radius: 8px; background: white; border: 1px solid #dde1ea; color: #5b6476; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .sidebar { position: absolute; left: 0; top: 48px; bottom: 0; width: 200px; background: #eef0f6; border-right: 1px solid #e1e4ec; padding: 24px 16px; }
+  .side-brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 17px; color: #1f2433; margin-bottom: 26px; }
+  .side-brand b { width: 28px; height: 28px; border-radius: 8px; background: linear-gradient(135deg, #f472b6, #8b5cf6); display: block; }
+  .side-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px; font-size: 15px; color: #4b5366; margin-bottom: 4px; }
+  .side-item.on { background: white; color: #1f2433; font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
+  .side-item i { width: 10px; height: 10px; border-radius: 3px; display: block; }
+  .content { position: absolute; left: 228px; top: 72px; right: 28px; }
+  .content h1 { font-size: 26px; color: #161b2b; letter-spacing: -0.4px; }
+  .content .sub { font-size: 14px; color: #7a8295; margin-top: 4px; }
+  .avatars { position: absolute; right: 0; top: 6px; display: flex; }
+  .avatars i { width: 34px; height: 34px; border-radius: 50%; border: 3px solid #f6f7fb; margin-left: -10px; display: block; }
+  .tiles { position: absolute; top: 66px; left: 0; right: 0; display: flex; gap: 16px; }
+  .tile { flex: 1; height: 96px; background: white; border-radius: 14px; padding: 16px 18px; box-shadow: 0 1px 3px rgba(20,30,60,0.06); border: 1px solid #eceef3; }
+  .tile .k { font-size: 13px; color: #7a8295; font-weight: 500; }
+  .tile .v { font-size: 28px; font-weight: 700; color: #161b2b; margin-top: 6px; letter-spacing: -0.5px; }
+  .tile .d { position: absolute; }
+  .delta { font-size: 13px; font-weight: 700; padding: 3px 8px; border-radius: 999px; margin-left: 8px; vertical-align: 4px; }
+  .up { color: #059669; background: #d1fae5; } .down { color: #dc2626; background: #fee2e2; }
+  .bottom-row { position: absolute; top: 498px; left: 0; right: 0; display: flex; gap: 16px; }
+  .bottom-row div { flex: 1; height: 62px; border-radius: 12px; background: white; border: 1px solid #eceef3; }
+
+  /* Chart card (captured region) */
+  .chart-card { width: 764px; height: 300px; background: white; border-radius: 16px; border: 1px solid #eceef3; box-shadow: 0 1px 3px rgba(20,30,60,0.06); padding: 20px 24px; position: relative; }
+  .chart-card .title { font-size: 15px; color: #7a8295; font-weight: 600; }
+  .chart-card .big { font-size: 34px; font-weight: 800; color: #161b2b; letter-spacing: -0.8px; margin-top: 4px; }
+  .chart-card .legend { position: absolute; right: 24px; top: 24px; display: flex; gap: 14px; font-size: 13px; color: #7a8295; }
+  .chart-card .legend i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; margin-right: 6px; vertical-align: -1px; }
+  .chart-card svg { position: absolute; left: 24px; bottom: 16px; }
+
+  /* Weather window */
+  #winC { left: 640px; top: 430px; width: 400px; height: 300px; }
+  .weather { width: 400px; height: 300px; border-radius: 16px; overflow: hidden; position: relative; color: white;
+    background: radial-gradient(260px 200px at 82% 18%, rgba(253, 224, 71, 0.55), transparent 70%), linear-gradient(170deg, #38bdf8, #2563eb 70%, #1d4ed8); }
+  .weather .titlebar { position: absolute; top: 0; left: 0; }
+  .weather .city { position: absolute; left: 26px; top: 50px; font-size: 22px; font-weight: 600; }
+  .weather .temp { position: absolute; left: 22px; top: 76px; font-size: 84px; font-weight: 200; letter-spacing: -3px; }
+  .weather .cond { position: absolute; left: 26px; top: 176px; font-size: 16px; font-weight: 500; opacity: 0.9; }
+  .weather .sun { position: absolute; right: 34px; top: 54px; font-size: 64px; }
+  .weather .hours { position: absolute; left: 18px; right: 18px; bottom: 16px; height: 70px; border-radius: 14px; background: rgba(255,255,255,0.16); border: 1px solid rgba(255,255,255,0.25); display: flex; justify-content: space-around; align-items: center; font-size: 14px; font-weight: 600; text-align: center; }
+  .weather .hours span { display: block; font-size: 18px; margin: 2px 0; }
+
+  /* Chat window */
+  #winB { left: 1200px; top: 150px; width: 580px; height: 720px; background: white; }
+  #winB > .titlebar { background: #f7f7f9; border-bottom: 1px solid #ececf0; height: 64px; }
+  .chat-head { display: flex; align-items: center; gap: 12px; margin-left: 14px; }
+  .chat-head i { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, #fb923c, #f43f5e); display: block; }
+  .chat-head b { font-size: 16px; color: #161b2b; display: block; }
+  .chat-head small { font-size: 13px; color: #8a91a3; }
+  #messages { position: absolute; left: 0; right: 0; top: 64px; height: 584px; overflow: hidden; background: white; }
+  .msg { position: absolute; max-width: 360px; font-size: 16px; line-height: 1.35; padding: 11px 16px; border-radius: 20px; }
+  .msg.in { left: 22px; background: #eef0f4; color: #1d2233; border-bottom-left-radius: 6px; }
+  .msg.out { right: 22px; background: #3478f6; color: white; border-bottom-right-radius: 6px; }
+  .msg.img { padding: 4px; background: #e8f0fe; border-radius: 18px; border-bottom-right-radius: 6px; overflow: hidden; }
+  .composer { position: absolute; left: 0; right: 0; bottom: 0; height: 72px; border-top: 1px solid #ececf0; background: #fafafb; display: flex; align-items: center; padding: 0 18px; gap: 12px; }
+  .composer .plus { width: 34px; height: 34px; border-radius: 50%; background: #e9ebf0; color: #6b7285; display: grid; place-items: center; font-size: 22px; }
+  #input { flex: 1; height: 42px; border-radius: 21px; border: 1px solid #dcdfe6; background: white; display: flex; align-items: center; padding: 0 16px; color: #a0a6b5; font-size: 16px; position: relative; }
+  #inputThumb { position: absolute; left: 10px; top: -86px; width: 160px; height: 78px; border-radius: 12px; overflow: hidden; box-shadow: 0 6px 16px rgba(0,0,0,0.15); opacity: 0; }
+
+  /* Scaled clones */
+  .clip { position: relative; overflow: hidden; }
+  .clip > .inner { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+  .capture-chart { width: 788px; height: 324px; background: #f6f7fb; padding: 12px; }
+
+  /* Selection overlay */
+  #dim { background: rgba(10, 14, 30, 0.28); opacity: 0; }
+  #selection { border: 1.5px solid white; box-shadow: 0 0 0 9999px rgba(10, 14, 30, 0.28); opacity: 0; }
+  #sizeLabel { font: 600 14px var(--font); color: white; background: rgba(0,0,0,0.55); padding: 4px 8px; border-radius: 6px; opacity: 0; white-space: nowrap; }
+  #flash { background: white; opacity: 0; }
+
+  /* Preview cards */
+  .preview { border-radius: 22px; padding: 6px; }
+  .preview .shot { border-radius: 16px; overflow: hidden; position: relative; background: rgba(0,0,0,0.12); }
+  .preview .ctrl { position: absolute; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; color: #1d2233; opacity: 0;
+    background: rgba(255,255,255,0.55); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.7); box-shadow: 0 4px 10px rgba(0,0,0,0.12); }
+  .preview .row { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; opacity: 0; }
+  .preview .row .ctrl { position: static; opacity: 1; }
+
+  #ghost { border-radius: 14px; overflow: hidden; opacity: 0; box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+
+  /* Popover */
+  #popover { left: 1430px; top: 42px; width: 360px; height: 354px; border-radius: 24px; padding: 16px; color: #141827; opacity: 0;
+    background: rgba(255,255,255,0.55); transform-origin: 180px 0; }
+  #popover .hdr { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 16px; height: 24px; }
+  .tiles3 { display: flex; gap: 8px; margin-top: 14px; }
+  .ptile { flex: 1; height: 100px; border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; font-size: 13px; font-weight: 700;
+    background: rgba(255,255,255,0.45); border: 1px solid rgba(255,255,255,0.75); box-shadow: inset 0 1px 0 rgba(255,255,255,0.8); }
+  .ptile small { font: 600 11.5px var(--rounded); color: #6b7285; }
+  .prow { margin-top: 12px; border-radius: 14px; display: flex; align-items: center; padding: 0 14px; gap: 10px; font-size: 13.5px; font-weight: 700;
+    background: rgba(255,255,255,0.45); border: 1px solid rgba(255,255,255,0.75); box-shadow: inset 0 1px 0 rgba(255,255,255,0.8); }
+  .prow small { margin-left: auto; font: 600 11.5px var(--rounded); color: #6b7285; }
+  .picker { position: relative; width: 76px; height: 48px; margin-left: auto; border-radius: 8px; border: 1px solid rgba(20,24,39,0.22); background: rgba(20,24,39,0.05); }
+  .picker i { position: absolute; width: 22.8px; height: 13.4px; border-radius: 3.5px; background: rgba(20,24,39,0.16); display: block; }
+  .pbtns { display: flex; justify-content: space-between; margin-top: 14px; }
+  .pbtn { height: 34px; padding: 0 14px; border-radius: 17px; display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 600;
+    background: rgba(255,255,255,0.5); border: 1px solid rgba(255,255,255,0.8); }
+
+  /* Gallery */
+  #gallery { left: 12px; top: 10px; width: 1896px; height: 252px; border-radius: 30px; opacity: 0; color: white; background: rgba(22, 28, 70, 0.34); overflow: hidden; }
+  #gallery .side { position: absolute; left: 30px; top: 26px; bottom: 26px; width: 170px; }
+  #gallery .side h3 { font-size: 20px; display: flex; align-items: center; gap: 9px; }
+  #gallery .side p { font-size: 14px; opacity: 0.75; margin-top: 6px; }
+  #gallery .side .btns { position: absolute; bottom: 0; display: flex; gap: 8px; }
+  #gallery .side .btns i { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,0.22); border: 1px solid rgba(255,255,255,0.45); font-style: normal; font-size: 15px; }
+  #gallery .divider { position: absolute; left: 218px; top: 24px; bottom: 24px; width: 1px; background: rgba(255,255,255,0.3); }
+  .gthumb { position: absolute; top: 26px; height: 168px; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 20px rgba(10,14,40,0.25); border: 1px solid rgba(255,255,255,0.3); }
+  .gcap { position: absolute; top: 202px; font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.82); }
+  .toast { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); padding: 8px 14px; border-radius: 999px; font-size: 14px; font-weight: 700; color: #141827; opacity: 0;
+    background: rgba(255,255,255,0.75); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border: 1px solid rgba(255,255,255,0.9); white-space: nowrap; }
+
+  /* Mock gallery images */
+  .mock-code { width: 100%; height: 100%; background: #0f172a; padding: 18px 20px; font: 600 12px ui-monospace, Menlo, monospace; line-height: 1.75; color: #94a3b8; }
+  .mock-code b { color: #c084fc; font-weight: 600; } .mock-code u { color: #38bdf8; text-decoration: none; } .mock-code s { color: #fbbf24; text-decoration: none; }
+  .mock-palette { width: 100%; height: 100%; display: flex; }
+  .mock-palette i { flex: 1; display: block; }
+  .mock-land { width: 100%; height: 100%; background: linear-gradient(180deg, #fda4af, #fdba74 45%, #fde68a); position: relative; }
+  .mock-land::before { content: ""; position: absolute; left: -10%; right: -10%; bottom: 0; height: 60%; background: #7c3aed; clip-path: polygon(0 100%, 0 60%, 18% 20%, 35% 55%, 52% 10%, 70% 50%, 85% 25%, 100% 55%, 100% 100%); opacity: 0.85; }
+  .mock-land::after { content: ""; position: absolute; left: 62%; top: 18%; width: 48px; height: 48px; border-radius: 50%; background: #fff7ed; }
+  .mock-post { width: 100%; height: 100%; background: white; padding: 18px; color: #0f172a; font-size: 13px; line-height: 1.45; }
+  .mock-post .who { display: flex; align-items: center; gap: 8px; font-weight: 700; margin-bottom: 8px; }
+  .mock-post .who i { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #34d399, #06b6d4); display: block; }
+
+  /* Caption HUD */
+  .caption { left: 50%; top: 928px; transform: translateX(-50%); display: flex; align-items: center; gap: 26px; padding: 20px 26px 20px 32px; border-radius: 30px; color: white; opacity: 0; white-space: nowrap;
+    background: rgba(15, 20, 45, 0.38); }
+  .caption .lbl { font: 700 14px var(--rounded); letter-spacing: 2.4px; text-transform: uppercase; color: #a5f3fc; }
+  .caption .ttl { font: 700 30px var(--rounded); letter-spacing: -0.3px; margin-top: 3px; }
+  .keys { display: flex; gap: 8px; }
+  .key { min-width: 58px; height: 58px; padding: 0 14px; border-radius: 14px; display: grid; place-items: center; font: 600 26px var(--rounded); color: #141827;
+    background: linear-gradient(180deg, #ffffff, #e9ecf4); box-shadow: 0 4px 0 #b9bfd0, 0 8px 16px rgba(0,0,0,0.25); }
+
+  /* Cursor */
+  #cursor { left: 0; top: 0; width: 0; height: 0; z-index: 50; }
+  #cursor svg { position: absolute; display: none; }
+  #ripple { width: 46px; height: 46px; border-radius: 50%; border: 3px solid rgba(255,255,255,0.9); opacity: 0; box-shadow: 0 0 12px rgba(255,255,255,0.6); }
+
+  /* Outro */
+  #outroVeil { opacity: 0; background: rgba(8, 12, 32, 0.62); -webkit-backdrop-filter: blur(30px) saturate(140%); backdrop-filter: blur(30px) saturate(140%); }
+  .chips { display: flex; gap: 12px; }
+  .chip { display: flex; align-items: center; gap: 10px; padding: 12px 18px; border-radius: 999px; font: 600 21px var(--rounded); color: rgba(255,255,255,0.75);
+    background: linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.06)); border: 1px solid rgba(255,255,255,0.22); }
+  .chip b { color: white; font-weight: 800; }
+  .free { font: 800 64px var(--rounded); letter-spacing: -1.5px; background: linear-gradient(90deg, #67e8f9, #a5b4fc 50%, #f0abfc); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .url-big { font: 700 30px var(--rounded); color: white; }
+  .url-big span { color: #67e8f9; }
+</style>
+</head>
+<body>
+<div id="stage">
+
+  <!-- ================= DESKTOP ================= -->
+  <div id="desktop" class="layer">
+    <div id="wallpaper" class="layer"></div>
+
+    <!-- Dashboard window -->
+    <div id="winA" class="abs window">
+      <div class="titlebar"><div class="lights"><i></i><i></i><i></i></div>
+        <div class="url">🔒 app.acme.io/launch</div>
+      </div>
+      <div class="sidebar">
+        <div class="side-brand"><b></b>Acme</div>
+        <div class="side-item on"><i style="background:#8b5cf6"></i>Overview</div>
+        <div class="side-item"><i style="background:#06b6d4"></i>Growth</div>
+        <div class="side-item"><i style="background:#f59e0b"></i>Revenue</div>
+        <div class="side-item"><i style="background:#10b981"></i>Customers</div>
+        <div class="side-item"><i style="background:#f43f5e"></i>Reports</div>
+      </div>
+      <div class="content">
+        <h1>Q4 Launch</h1>
+        <div class="sub">Updated just now · All regions</div>
+        <div class="avatars"><i style="background:#fbbf24"></i><i style="background:#34d399"></i><i style="background:#60a5fa"></i></div>
+        <div class="tiles">
+          <div class="tile"><div class="k">Signups</div><div class="v">12,480<span class="delta up">▲ 18%</span></div></div>
+          <div class="tile"><div class="k">Revenue</div><div class="v">$84.2k<span class="delta up">▲ 9%</span></div></div>
+          <div class="tile"><div class="k">Churn</div><div class="v">1.2%<span class="delta down">▼ 0.4</span></div></div>
+        </div>
+        <div id="chartSlot" style="position:absolute; top:180px; left:0;"></div>
+        <div class="bottom-row"><div></div><div></div><div></div></div>
+      </div>
+      <div class="highlight" id="hlA"></div>
+    </div>
+
+    <!-- Chat window -->
+    <div id="winB" class="abs window">
+      <div class="titlebar"><div class="lights"><i></i><i></i><i></i></div>
+        <div class="chat-head"><i></i><div><b>Maya Chen</b><small>Design review</small></div></div>
+      </div>
+      <div id="messages"></div>
+      <div class="composer"><div class="plus">+</div><div id="input">Message<div id="inputThumb" class="clip"></div></div></div>
+      <div class="highlight" id="hlB"></div>
+    </div>
+
+    <!-- Weather window -->
+    <div id="winC" class="abs window">
+      <div id="weatherSlot"></div>
+      <div class="highlight" id="hlC"></div>
+    </div>
+
+    <!-- Menu bar -->
+    <div id="menubar" class="abs">
+      <svg width="16" height="19" viewBox="0 0 170 200" fill="white"><path d="M150 170c-8 18-12 26-22 42-14 22-34 49-59 49-22 0-28-14-58-14-30 0-36 15-58 14C-72 260-91 236-105 214" opacity="0"/><path d="M140.6 106.2c-.2-23.8 19.4-35.2 20.3-35.8-11.1-16.2-28.3-18.4-34.4-18.7-14.6-1.5-28.6 8.6-36 8.6-7.5 0-18.9-8.4-31.1-8.2-16 .2-30.7 9.3-38.9 23.6-16.6 28.8-4.3 71.4 11.9 94.8 7.9 11.4 17.3 24.2 29.7 23.8 11.9-.5 16.4-7.7 30.8-7.7 14.4 0 18.4 7.7 31 7.4 12.8-.2 20.9-11.6 28.7-23.1 9.1-13.2 12.8-26 13-26.7-.3-.1-24.8-9.5-25-37.9zM117 36.4c6.5-7.9 10.9-18.9 9.7-29.9-9.4.4-20.8 6.3-27.5 14.2-6 7-11.3 18.2-9.9 28.9 10.5.8 21.2-5.3 27.7-13.2z"/></svg>
+      <span class="bold">Finder</span><span>File</span><span>Edit</span><span>View</span><span>Go</span><span>Window</span><span>Help</span>
+      <div class="right">
+        <div class="mb-icon" id="mbSnaps">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round"><path d="M3 8V5.5A2.5 2.5 0 0 1 5.5 3H8M16 3h2.5A2.5 2.5 0 0 1 21 5.5V8M3 16v2.5A2.5 2.5 0 0 0 5.5 21H8M16 21h2.5a2.5 2.5 0 0 0 2.5-2.5V16"/><rect x="8" y="8" width="8" height="8" rx="2" fill="white" stroke="none" opacity=".85"/></svg>
+        </div>
+        <svg width="20" height="16" viewBox="0 0 24 18" fill="white"><path d="M12 15.5a2 2 0 1 1 0 .01zM5.6 9.6a9 9 0 0 1 12.8 0l-1.6 1.6a6.7 6.7 0 0 0-9.6 0zM1.8 5.8a14.4 14.4 0 0 1 20.4 0l-1.6 1.6a12.1 12.1 0 0 0-17.2 0z"/></svg>
+        <svg width="28" height="14" viewBox="0 0 28 14"><rect x=".5" y=".5" width="23" height="13" rx="4" fill="none" stroke="white" opacity=".7"/><rect x="2.5" y="2.5" width="16" height="9" rx="2" fill="white"/><rect x="25" y="4.5" width="2" height="5" rx="1" fill="white" opacity=".7"/></svg>
+        <span>Fri Oct 10&nbsp;&nbsp;9:41 AM</span>
+      </div>
+    </div>
+
+    <!-- Capture overlays -->
+    <div id="dim" class="layer"></div>
+    <div id="selection" class="abs"></div>
+    <div id="sizeLabel" class="abs">788 × 324</div>
+
+    <!-- Previews -->
+    <div id="p1" class="abs preview glass">
+      <div class="shot clip" id="p1shot"></div>
+      <div class="ctrl" style="left:14px;top:14px">✕</div><div class="ctrl" style="right:14px;top:14px">📌</div>
+    </div>
+    <div id="p2" class="abs preview glass">
+      <div class="shot clip" id="p2shot"></div>
+      <div class="ctrl" id="p2x" style="left:14px;top:14px;font-size:13px;font-weight:800">✕</div>
+      <div class="ctrl" id="p2pin" style="right:14px;top:14px;font-size:13px">📌</div>
+      <div class="row" id="p2row"><div class="ctrl" style="font-size:13px">⧉</div><div class="ctrl" style="font-size:13px">⤓</div><div class="ctrl" style="font-size:13px">↗</div></div>
+    </div>
+    <div id="ghost" class="abs clip"></div>
+
+    <!-- Popover -->
+    <div id="popover" class="abs glass">
+      <div class="hdr">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3478f6" stroke-width="2.4" stroke-linecap="round"><path d="M3 8V5.5A2.5 2.5 0 0 1 5.5 3H8M16 3h2.5A2.5 2.5 0 0 1 21 5.5V8M3 16v2.5A2.5 2.5 0 0 0 5.5 21H8M16 21h2.5a2.5 2.5 0 0 0 2.5-2.5V16"/></svg>Snaps
+      </div>
+      <div class="tiles3">
+        <div class="ptile"><svg width="28" height="24" viewBox="0 0 28 24" fill="none" stroke="#141827" stroke-width="2" stroke-dasharray="4 3"><rect x="2" y="2" width="24" height="20" rx="4"/></svg>Area<small>⌃⇧4</small></div>
+        <div class="ptile"><svg width="28" height="24" viewBox="0 0 28 24" fill="none" stroke="#141827" stroke-width="2"><rect x="2" y="2" width="24" height="20" rx="4"/><path d="M2 8h24"/></svg>Window<small>⌃⇧5</small></div>
+        <div class="ptile"><svg width="28" height="24" viewBox="0 0 28 24" fill="none" stroke="#141827" stroke-width="2"><rect x="2" y="2" width="24" height="15" rx="3"/><path d="M10 22h8M14 17v5"/></svg>Full Screen<small>⌃⇧3</small></div>
+      </div>
+      <div class="prow" style="height:44px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3478f6" stroke-width="2"><rect x="3" y="7" width="15" height="13" rx="2.5"/><path d="M7 4h11.5A2.5 2.5 0 0 1 21 6.5V16"/></svg>Gallery<small>⌃⇧G</small>
+      </div>
+      <div class="prow" style="height:68px">
+        <div><div>Preview corner</div><div id="cornerName" style="font-size:11.5px;font-weight:500;color:#6b7285;margin-top:2px">Bottom Left</div></div>
+        <div class="picker">
+          <i id="pk-tl" style="left:4.8px;top:4.8px"></i><i id="pk-tr" style="right:4.8px;top:4.8px"></i>
+          <i id="pk-bl" style="left:4.8px;bottom:4.8px"></i><i id="pk-br" style="right:4.8px;bottom:4.8px"></i>
+        </div>
+      </div>
+      <div class="pbtns"><div class="pbtn">⚙︎ Settings…</div><div class="pbtn">⏻ Quit</div></div>
+    </div>
+
+    <!-- Gallery -->
+    <div id="gallery" class="abs glass">
+      <div class="side">
+        <h3><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a5f3fc" stroke-width="2.2"><rect x="3" y="7" width="15" height="13" rx="2.5"/><path d="M7 4h11.5A2.5 2.5 0 0 1 21 6.5V16"/></svg>Gallery</h3>
+        <p>6 recent</p>
+        <div class="btns"><i>✕</i><i>🗂</i><i>🗑</i></div>
+      </div>
+      <div class="divider"></div>
+      <div id="gthumbs"></div>
+    </div>
+
+    <!-- Captions -->
+    <div id="captions"></div>
+
+    <div id="flash" class="layer"></div>
+    <div id="outroVeil" class="layer"></div>
+  </div>
+
+  <!-- ================= INTRO ================= -->
+  <div id="intro" class="layer night">
+    <div class="layer dots"></div>
+    <div class="center-col">
+      <img id="introIcon" src="../assets/icon.svg" width="300" height="300" alt="">
+      <div id="introWord" class="wordmark" style="margin-top:4px">Snaps</div>
+      <div id="introTag" class="tagline" style="margin-top:22px">Screenshots that land on your clipboard.</div>
+      <div id="introBadge" class="pill" style="margin-top:40px"><span class="dot"></span>Free &amp; open source for macOS</div>
+    </div>
+  </div>
+
+  <!-- ================= OUTRO ================= -->
+  <div id="outro" class="layer" style="opacity:0">
+    <div class="center-col">
+      <img id="oIcon" src="../assets/icon.svg" width="220" height="220" alt="">
+      <div id="oWord" class="wordmark" style="font-size:120px;margin-top:0">Snaps</div>
+      <div id="oFree" class="free" style="margin-top:18px">Totally free. Forever.</div>
+      <div id="oChips" class="chips" style="margin-top:28px">
+        <div class="chip"><b>No</b> account</div><div class="chip"><b>No</b> subscription</div><div class="chip"><b>No</b> tracking</div><div class="chip"><b>Open</b> source</div>
+      </div>
+      <div id="oKeys" class="chips" style="margin-top:16px">
+        <div class="chip"><b>⌃⇧4</b> Area</div><div class="chip"><b>⌃⇧5</b> Window</div><div class="chip"><b>⌃⇧3</b> Screen</div><div class="chip"><b>⌃⇧G</b> Gallery</div>
+      </div>
+      <div id="oUrl" class="url-big" style="margin-top:48px">Download at <span>nearbycoder.github.io/snaps</span></div>
+      <div id="oReq" style="margin-top:12px;font:500 19px var(--rounded);color:rgba(255,255,255,0.55)">For macOS 26 and later · Developer ID signed · Notarized by Apple</div>
+    </div>
+  </div>
+
+  <!-- Cursor (top-most) -->
+  <div id="ripple" class="abs" style="z-index:49"></div>
+  <div id="cursor" class="abs">
+    <svg id="cur-arrow" width="34" height="40" viewBox="0 0 17 20" style="left:-3px;top:-2px"><path d="M1.5 1.2v15.6l3.9-3.7 2.6 5.9 2.6-1.1-2.5-5.8h5.4z" fill="black" stroke="white" stroke-width="1.3" stroke-linejoin="round"/></svg>
+    <svg id="cur-cross" width="44" height="44" viewBox="0 0 44 44" style="left:-22px;top:-22px"><g stroke="white" stroke-width="4"><path d="M22 2v16M22 26v16M2 22h16M26 22h16"/></g><g stroke="black" stroke-width="2"><path d="M22 2v16M22 26v16M2 22h16M26 22h16"/></g></svg>
+    <svg id="cur-cam" width="48" height="40" viewBox="0 0 24 20" style="left:-24px;top:-20px"><path d="M8.2 2.5h7.6l1.6 2.5H21a2 2 0 0 1 2 2v9.5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h3.6z" fill="black" stroke="white" stroke-width="1.2"/><circle cx="12" cy="11.5" r="4" fill="none" stroke="white" stroke-width="1.6"/></svg>
+    <svg id="cur-grab" width="40" height="40" viewBox="0 0 20 20" style="left:-20px;top:-20px"><path d="M6 8.5V6.8c0-.9 1.6-.9 1.6 0v1.4-2.2c0-.9 1.7-.9 1.7 0v2-2.3c0-.9 1.7-.9 1.7 0v2.5-1.6c0-.9 1.6-.9 1.6 0v5.2c0 3-1.8 5-4.6 5-2.2 0-3.3-1-4.3-2.6L2.4 11c-.5-.9.7-1.7 1.4-.9L6 12.2z" fill="white" stroke="black" stroke-width="1.1" stroke-linejoin="round"/></svg>
+  </div>
+</div>
+
+<script>
+// ---------- Content templates ----------
+function chartCard() {
+  const pts = [38, 52, 47, 66, 61, 82, 78, 96, 90, 112, 120, 138];
+  const w = 716, h = 160, max = 150;
+  const xs = pts.map((_, i) => (i / (pts.length - 1)) * w);
+  const ys = pts.map(v => h - (v / max) * h);
+  const line = xs.map((x, i) => `${i ? "L" : "M"}${x.toFixed(1)} ${ys[i].toFixed(1)}`).join(" ");
+  const bars = pts.map((v, i) => `<rect x="${(xs[i] - 9).toFixed(1)}" y="${(h - v * 0.55 / max * h).toFixed(1)}" width="18" height="${(v * 0.55 / max * h).toFixed(1)}" rx="4" fill="#c7d2fe" opacity=".75"/>`).join("");
+  return `<div class="chart-card">
+    <div class="title">Weekly active users</div>
+    <div class="big">48,210 <span class="delta up" style="font-size:14px">▲ 18.4%</span></div>
+    <div class="legend"><span><i style="background:#6366f1"></i>This quarter</span><span><i style="background:#c7d2fe"></i>Last quarter</span></div>
+    <svg width="${w}" height="${h + 10}" viewBox="0 -5 ${w} ${h + 10}">
+      <defs><linearGradient id="ga" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6366f1" stop-opacity=".35"/><stop offset="1" stop-color="#6366f1" stop-opacity="0"/></linearGradient></defs>
+      ${[0, 1, 2, 3].map(i => `<path d="M0 ${i * h / 3} H${w}" stroke="#eef0f5" stroke-width="1"/>`).join("")}
+      ${bars}
+      <path d="${line} L${w} ${h} L0 ${h} Z" fill="url(#ga)"/>
+      <path d="${line}" fill="none" stroke="#6366f1" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="${xs[11]}" cy="${ys[11]}" r="7" fill="white" stroke="#6366f1" stroke-width="4"/>
+    </svg>
+  </div>`;
+}
+function captureChart() { return `<div class="capture-chart">${chartCard()}</div>`; }
+function weather() {
+  const hours = [["Now", "☀️", "24°"], ["11", "☀️", "25°"], ["12", "🌤", "26°"], ["13", "⛅️", "27°"], ["14", "🌤", "26°"], ["15", "☀️", "25°"]];
+  return `<div class="weather"><div class="titlebar"><div class="lights"><i></i><i></i><i></i></div></div>
+    <div class="city">Lisbon</div><div class="temp">24°</div><div class="cond">Sunny · H:27° L:18°</div><div class="sun">☀️</div>
+    <div class="hours">${hours.map(([a, b, c]) => `<div>${a}<span>${b}</span>${c}</div>`).join("")}</div></div>`;
+}
+function bubble(html, w, h, width) {
+  const s = width / w;
+  return `<div class="clip" style="width:${width}px;height:${Math.round(h * s)}px;border-radius:14px">${scaled(html, w, h, s)}</div>`;
+}
+function scaled(html, w, h, s) {
+  return `<div class="inner" style="width:${w}px;height:${h}px;transform:scale(${s})">${html}</div>`;
+}
+
+document.getElementById("chartSlot").innerHTML = chartCard();
+document.getElementById("weatherSlot").innerHTML = weather();
+
+// Preview geometry (cards fit within 320×220 + 6px padding).
+const P1 = { w: 320, h: Math.round(324 * 320 / 788) };          // chart
+const P2 = { w: Math.round(400 * 220 / 300), h: 220 };          // weather
+for (const [id, size, html, ow, oh] of [["p1", P1, captureChart(), 788, 324], ["p2", P2, weather(), 400, 300]]) {
+  const el = document.getElementById(id);
+  el.style.width = size.w + 12 + "px"; el.style.height = size.h + 12 + "px";
+  const shot = document.getElementById(id + "shot");
+  shot.style.width = size.w + "px"; shot.style.height = size.h + "px";
+  shot.innerHTML = scaled(html, ow, oh, size.w / ow);
+}
+const ghost = document.getElementById("ghost");
+ghost.style.width = "220px"; ghost.style.height = "165px";
+ghost.innerHTML = scaled(weather(), 400, 300, 220 / 400);
+const inputThumb = document.getElementById("inputThumb");
+inputThumb.innerHTML = scaled(captureChart(), 788, 324, 160 / 788);
+
+// Chat messages: bottom-anchored stack.
+const MSGS = [
+  { id: "m0", cls: "in", html: "Design review moved to 10:30 ☕️", h: 45, at: -1 },
+  { id: "m1", cls: "in", html: "Morning! Can you send me the latest numbers before standup?", h: 67, at: -1 },
+  { id: "m2", cls: "out img", html: bubble(captureChart(), 788, 324, 340), w: 348, h: Math.round(324 * 340 / 788) + 8, at: 11.35 },
+  { id: "m3", cls: "out img", html: bubble(weather(), 400, 300, 240), w: 248, h: 188, at: 18.95 },
+  { id: "m4", cls: "in", html: "Perfect, thanks! 🙌", h: 45, at: 20.2 },
+];
+const messagesEl = document.getElementById("messages");
+for (const m of MSGS) {
+  const d = document.createElement("div");
+  d.id = m.id; d.className = "msg " + m.cls; d.innerHTML = m.html;
+  if (m.w) { d.style.width = m.w + "px"; d.style.height = m.h + "px"; }
+  messagesEl.appendChild(d);
+}
+
+// Gallery thumbnails.
+const GT = [
+  { w: 340, html: scaled(captureChart(), 788, 324, 340 / 788 * 1.2), label: "Just now", fit: true },
+  { w: 224, html: scaled(weather(), 400, 300, 224 / 400 * 1.0), label: "Just now" },
+  { w: 286, html: `<div class="mock-code"><b>func</b> <u>capture</u>(_ mode: <s>CaptureMode</s>) {<br>&nbsp;&nbsp;<b>guard</b> !isCapturing <b>else</b> { <b>return</b> }<br>&nbsp;&nbsp;statusBar?.<u>closePopover</u>()<br>&nbsp;&nbsp;<b>let</b> url = <b>await</b> <u>capture</u>(mode)<br>&nbsp;&nbsp;Clipboard.<u>copy</u>(url)<br>}</div>`, label: "12 min ago" },
+  { w: 230, html: `<div class="mock-palette"><i style="background:#0ea5e9"></i><i style="background:#6366f1"></i><i style="background:#a855f7"></i><i style="background:#ec4899"></i><i style="background:#f59e0b"></i></div>`, label: "1 hr ago" },
+  { w: 266, html: `<div class="mock-land"></div>`, label: "Yesterday" },
+  { w: 262, html: `<div class="mock-post"><div class="who"><i></i>Sam Rivera</div>Shipped the new onboarding flow today 🚀 Conversion is up 22% in the first week. Huge thanks to the team!</div>`, label: "Yesterday" },
+];
+const gthumbs = document.getElementById("gthumbs");
+let gx = 246;
+for (const [i, g] of GT.entries()) {
+  g.x = gx;
+  const d = document.createElement("div");
+  d.className = "gthumb clip"; d.id = "g" + i;
+  d.style.left = gx + "px"; d.style.width = g.w + "px";
+  d.innerHTML = g.html + (i === 1 ? `<div class="toast" id="gtoast">✓ Copied</div>` : "");
+  const c = document.createElement("div");
+  c.className = "gcap"; c.id = "gc" + i; c.style.left = gx + 2 + "px"; c.textContent = g.label;
+  gthumbs.appendChild(d); gthumbs.appendChild(c);
+  gx += g.w + 18;
+}
+
+// Captions.
+const CAPS = [
+  { lbl: "Area capture", ttl: "Select any part of your screen", keys: ["⌃", "⇧", "4"], a: 4.3, b: 8.5, down: [4.95, 5.1, 5.25], up: 5.7 },
+  { lbl: "Clipboard", ttl: "It's already copied. Just paste.", keys: ["⌘", "V"], a: 8.6, b: 13.0, down: [10.4, 10.55], up: 10.95 },
+  { lbl: "Window capture", ttl: "Click any window", keys: ["⌃", "⇧", "5"], a: 13.6, b: 16.9, down: [14.05, 14.2, 14.35], up: 14.8 },
+  { lbl: "Drag & drop", ttl: "Drag the preview into any app", keys: [], a: 17.0, b: 20.6 },
+  { lbl: "Your corner", ttl: "Previews show up where you want", keys: [], a: 20.8, b: 24.6 },
+  { lbl: "Gallery", ttl: "Every recent snap, one shortcut away", keys: ["⌃", "⇧", "G"], a: 24.8, b: 29.9, down: [25.05, 25.2, 25.35], up: 25.8 },
+];
+const capsEl = document.getElementById("captions");
+for (const [i, c] of CAPS.entries()) {
+  const d = document.createElement("div");
+  d.className = "abs caption glass"; d.id = "cap" + i;
+  d.innerHTML = `<div><div class="lbl">${c.lbl}</div><div class="ttl">${c.ttl}</div></div>` +
+    (c.keys.length ? `<div class="keys">${c.keys.map((k, j) => `<div class="key" id="k${i}_${j}">${k}</div>`).join("")}</div>` : "");
+  capsEl.appendChild(d);
+}
+
+// ---------- Timeline helpers ----------
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const E = {
+  lin: t => t,
+  out: t => 1 - Math.pow(1 - t, 3),
+  quint: t => 1 - Math.pow(1 - t, 5),
+  inOut: t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2,
+  in: t => t * t * t,
+  back: t => { const c1 = 1.5, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); },
+};
+const prog = (t, s, d, e = E.out) => e(clamp((t - s) / d));
+const $ = id => document.getElementById(id);
+const set = (el, styles) => { for (const k in styles) el.style[k] = styles[k]; };
+
+const POP = { x: 1430, y: 42 };
+const PICK_TR = { x: POP.x + 332 - 4.8 - 11.4, y: POP.y + 232 + 4.8 + 6.7 };
+const MB_SNAPS = () => { const r = $("mbSnaps").getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; };
+const BL = (s) => ({ x: 24, y: 1080 - 24 - s.h - 12 });
+const TR = (s) => ({ x: 1920 - 24 - s.w - 12, y: 34 + 24 });
+const P2BL = BL(P2);
+const P2C = { x: P2BL.x + (P2.w + 12) / 2, y: P2BL.y + (P2.h + 12) / 2 };
+const G = (i) => ({ x: 12 + GT[i].x + GT[i].w / 2, y: 10 + 26 + 84 });
+
+let CURSOR = [];
+function buildCursorPath() {
+  const mb = MB_SNAPS();
+  CURSOR = [
+    [3.8, 1520, 820], [5.75, 1520, 820], [6.35, 336, 350], [7.6, 1124, 674], [8.9, 1124, 674],
+    [9.8, 1450, 836], [14.5, 1450, 836], [15.15, 520, 300], [15.55, 520, 300], [15.95, 860, 600],
+    [17.05, 860, 600], [17.6, P2C.x, P2C.y], [17.72, P2C.x, P2C.y], [18.9, 1490, 520],
+    [20.0, 1490, 520], [20.75, mb.x, mb.y], [21.4, mb.x, mb.y], [22.05, PICK_TR.x, PICK_TR.y],
+    [22.5, PICK_TR.x, PICK_TR.y], [23.4, 1250, 640], [26.3, 1250, 640], [27.1, G(0).x, G(0).y],
+    [27.4, G(0).x, G(0).y], [27.95, G(1).x, G(1).y], [28.9, G(1).x, G(1).y], [29.8, 1180, 620],
+  ];
+}
+function cursorAt(t) {
+  if (t <= CURSOR[0][0]) return { x: CURSOR[0][1], y: CURSOR[0][2] };
+  for (let i = 1; i < CURSOR.length; i++) {
+    const [t1, x1, y1] = CURSOR[i];
+    if (t <= t1) {
+      const [t0, x0, y0] = CURSOR[i - 1];
+      const k = E.inOut((t - t0) / (t1 - t0));
+      // Gentle arc on longer moves.
+      const arc = Math.sin(k * Math.PI) * Math.min(60, Math.hypot(x1 - x0, y1 - y0) * 0.08);
+      return { x: lerp(x0, x1, k), y: lerp(y0, y1, k) - arc };
+    }
+  }
+  const l = CURSOR[CURSOR.length - 1];
+  return { x: l[1], y: l[2] };
+}
+const inside = (p, x, y, w, h) => p.x >= x && p.x <= x + w && p.y >= y && p.y <= y + h;
+
+// ---------- Frame ----------
+function renderAt(t) {
+  // Intro
+  const introOut = prog(t, 3.0, 0.8, E.inOut);
+  set($("intro"), { opacity: 1 - introOut, transform: `scale(${1 + introOut * 0.08})` });
+  const ic = prog(t, 0.15, 1.0, E.back);
+  set($("introIcon"), { opacity: prog(t, 0.15, 0.5), transform: `scale(${0.6 + ic * 0.4}) rotate(${(1 - ic) * -8}deg)`, filter: `drop-shadow(0 30px 60px rgba(56,189,248,${0.35 * ic}))` });
+  set($("introWord"), { opacity: prog(t, 0.7, 0.6), transform: `translateY(${(1 - prog(t, 0.7, 0.8, E.quint)) * 40}px)` });
+  set($("introTag"), { opacity: prog(t, 1.15, 0.6), transform: `translateY(${(1 - prog(t, 1.15, 0.8, E.quint)) * 30}px)` });
+  set($("introBadge"), { opacity: prog(t, 1.6, 0.6), transform: `translateY(${(1 - prog(t, 1.6, 0.8, E.quint)) * 24}px) scale(${0.94 + prog(t, 1.6, 0.8, E.back) * 0.06})` });
+
+  // Desktop entrance
+  const dIn = prog(t, 3.0, 1.0, E.out);
+  set($("desktop"), { transform: `scale(${1.05 - dIn * 0.05})` });
+  set($("wallpaper"), { filter: `blur(${(1 - dIn) * 14}px)` });
+
+  const cur = cursorAt(t);
+
+  // Window C opens
+  const cIn = prog(t, 12.95, 0.5, E.back);
+  set($("winC"), { opacity: prog(t, 12.95, 0.3), transform: `scale(${0.85 + 0.15 * cIn})` });
+
+  // Window highlight while picking a window
+  const camMode = t >= 14.5 && t < 16.0;
+  const overC = t >= 12.95 && inside(cur, 640, 430, 400, 300);
+  const overA = !overC && inside(cur, 120, 110, 1020, 660);
+  const overB = !overC && !overA && inside(cur, 1200, 150, 580, 720);
+  set($("hlA"), { opacity: camMode && overA ? 1 : 0 });
+  set($("hlB"), { opacity: camMode && overB ? 1 : 0 });
+  set($("hlC"), { opacity: camMode && overC ? 1 : 0 });
+
+  // Area selection
+  const dimOn = prog(t, 5.55, 0.25) * (1 - prog(t, 7.62, 0.12, E.lin));
+  const selOn = t >= 6.35 && t < 7.74;
+  set($("dim"), { opacity: selOn ? 0 : dimOn });
+  if (selOn) {
+    const x0 = 336, y0 = 350;
+    const w = Math.max(1, cur.x - x0), h = Math.max(1, cur.y - y0);
+    set($("selection"), { opacity: 1, left: x0 + "px", top: y0 + "px", width: w + "px", height: h + "px" });
+    $("sizeLabel").textContent = `${Math.round(w)} × ${Math.round(h)}`;
+    set($("sizeLabel"), { opacity: 1, left: cur.x + 16 + "px", top: cur.y + 14 + "px" });
+  } else {
+    set($("selection"), { opacity: 0 });
+    set($("sizeLabel"), { opacity: 0 });
+  }
+
+  // Shutter flashes
+  const flash = (s) => (t >= s ? Math.exp(-(t - s) * 9) * prog(t, s, 0.04, E.lin) : 0);
+  set($("flash"), { opacity: Math.max(flash(7.66), flash(16.0)) * 0.6 });
+
+  // Previews
+  const p1In = prog(t, 7.95, 0.55, E.quint);
+  const stack = prog(t, 16.25, 0.45, E.quint) * (1 - prog(t, 19.25, 0.45, E.quint));
+  const hopOut = prog(t, 22.55, 0.15, E.lin);
+  const hopIn = prog(t, 22.72, 0.55, E.quint);
+  const p1Out = prog(t, 24.2, 0.3, E.in);
+  let p1pos, p1op, p1dx = 0;
+  if (t < 22.72) {
+    const bl = BL(P1);
+    p1pos = { x: bl.x, y: bl.y - stack * (P2.h + 12 + 12) };
+    p1dx = (1 - p1In) * -48;
+    p1op = p1In * (1 - hopOut);
+  } else {
+    const tr = TR(P1);
+    p1pos = tr;
+    p1dx = (1 - hopIn) * 48 + p1Out * 48;
+    p1op = hopIn * (1 - p1Out);
+  }
+  set($("p1"), { left: p1pos.x + p1dx + "px", top: p1pos.y + "px", opacity: p1op });
+
+  const p2In = prog(t, 16.25, 0.55, E.quint);
+  const dragging = t >= 17.72 && t < 18.95;
+  const p2Out = prog(t, 18.95, 0.25, E.in);
+  set($("p2"), { left: P2BL.x + (1 - p2In) * -48 - p2Out * 48 + "px", top: P2BL.y + "px", opacity: p2In * (1 - p2Out) * (dragging ? 0.35 : 1) });
+  const hoverP2 = t > 16.6 && t < 17.72 && inside(cur, P2BL.x, P2BL.y, P2.w + 12, P2.h + 12);
+  for (const id of ["p2x", "p2pin", "p2row"]) set($(id), { opacity: hoverP2 ? 1 : 0 });
+
+  // Drag ghost
+  const ghostOn = t >= 17.72 && t < 19.15;
+  const drop = prog(t, 18.95, 0.2, E.in);
+  set(ghost, { opacity: ghostOn ? 0.92 * (1 - drop) : 0, left: cur.x - 110 + "px", top: cur.y - 82 + "px", transform: `scale(${1 - drop * 0.25}) rotate(${-3 + drop * 3}deg)` });
+
+  // Chat composer + messages
+  const focus = t >= 9.9 && t < 12.2;
+  set($("input"), { borderColor: focus ? "#3478f6" : "#dcdfe6", boxShadow: focus ? "0 0 0 3px rgba(52,120,246,0.25)" : "none" });
+  const thumbIn = prog(t, 10.75, 0.35, E.back) * (1 - prog(t, 11.3, 0.2, E.in));
+  set(inputThumb, { opacity: thumbIn, transform: `scale(${0.7 + 0.3 * Math.min(1, thumbIn)})` });
+
+  let bottom = 584 - 18;
+  for (let i = MSGS.length - 1; i >= 0; i--) {
+    const m = MSGS[i];
+    const k = m.at < 0 ? 1 : prog(t, m.at, 0.45, E.quint);
+    const el = $(m.id);
+    const h = m.h * k;
+    set(el, { top: bottom - m.h + "px", opacity: k, transform: `translateY(${(1 - k) * 24}px) scale(${0.92 + 0.08 * k})`, transformOrigin: m.cls.includes("out") ? "100% 100%" : "0 100%" });
+    bottom -= h + 10 * k;
+  }
+
+  // Popover + corner picker
+  const popIn = prog(t, 20.9, 0.35, E.back) * (1 - prog(t, 22.35, 0.2, E.in));
+  set($("popover"), { opacity: Math.min(1, popIn), transform: `translateY(${(1 - Math.min(1, popIn)) * -8}px) scale(${0.95 + 0.05 * Math.min(1, popIn)})` });
+  $("mbSnaps").classList.toggle("active", t >= 20.9 && t < 22.45);
+  const trSel = t >= 22.18;
+  set($("pk-bl"), { background: trSel ? "rgba(20,24,39,0.16)" : "#3478f6" });
+  set($("pk-tr"), { background: trSel ? "#3478f6" : "rgba(20,24,39,0.16)" });
+  $("cornerName").textContent = trSel ? "Top Right" : "Bottom Left";
+
+  // Gallery
+  const gIn = prog(t, 25.5, 0.5, E.quint) * (1 - prog(t, 29.3, 0.35, E.in));
+  set($("gallery"), { opacity: Math.min(1, gIn * 1.4), transform: `translateY(${(1 - gIn) * -60}px)` });
+  for (const [i, g] of GT.entries()) {
+    const k = prog(t, 25.75 + i * 0.07, 0.45, E.back);
+    const hov = t > 26.3 && t < 29.3 && inside(cur, 12 + g.x, 36, g.w, 168);
+    set($("g" + i), { opacity: Math.min(1, k), transform: `translateY(${(1 - Math.min(1, k)) * 18}px) scale(${hov ? 1.04 : 1})`, borderColor: hov ? "rgba(255,255,255,0.85)" : "rgba(255,255,255,0.3)" });
+    set($("gc" + i), { opacity: Math.min(1, k) });
+  }
+  const toast = prog(t, 28.2, 0.25, E.back) * (1 - prog(t, 29.0, 0.25, E.in));
+  set($("gtoast"), { opacity: Math.min(1, toast), transform: `translate(-50%, -50%) scale(${0.85 + 0.15 * Math.min(1, toast)})` });
+
+  // Captions + key presses
+  for (const [i, c] of CAPS.entries()) {
+    const k = prog(t, c.a, 0.45, E.quint) * (1 - prog(t, c.b - 0.35, 0.35, E.in));
+    set($("cap" + i), { opacity: k, transform: `translateX(-50%) translateY(${(1 - k) * 22}px)` });
+    c.keys.forEach((_, j) => {
+      const down = t >= c.down[j] && t < c.up;
+      set($(`k${i}_${j}`), { transform: down ? "translateY(4px)" : "none", boxShadow: down ? "0 0 0 #b9bfd0, 0 0 22px rgba(165,243,252,0.85)" : "", background: down ? "linear-gradient(180deg, #ecfeff, #cffafe)" : "" });
+    });
+  }
+
+  // Outro
+  const veil = prog(t, 29.9, 0.8, E.inOut);
+  set($("outroVeil"), { opacity: veil });
+  set($("outro"), { opacity: prog(t, 30.2, 0.4) });
+  const st = (el, s) => set($(el), { opacity: prog(t, s, 0.5), transform: `translateY(${(1 - prog(t, s, 0.7, E.quint)) * 30}px)` });
+  const oi = prog(t, 30.2, 0.9, E.back);
+  set($("oIcon"), { opacity: prog(t, 30.2, 0.4), transform: `scale(${0.7 + 0.3 * oi})`, filter: `drop-shadow(0 24px 50px rgba(56,189,248,${0.35 * oi}))` });
+  st("oWord", 30.45); st("oFree", 30.75); st("oChips", 31.05); st("oKeys", 31.3); st("oUrl", 31.6); st("oReq", 31.8);
+
+  // Cursor
+  const visible = t >= 3.7 && t < 29.95;
+  const type = !visible ? null
+    : (t >= 5.55 && t < 7.74) ? "cross"
+    : camMode ? "cam"
+    : (t >= 17.72 && t < 18.98) ? "grab"
+    : "arrow";
+  for (const n of ["arrow", "cross", "cam", "grab"]) $("cur-" + n).style.display = n === type ? "block" : "none";
+  const press = [9.9, 16.0, 20.85, 22.15, 28.15].some(s => t >= s && t < s + 0.12) || (t >= 6.35 && t < 7.62);
+  set($("cursor"), { left: cur.x + "px", top: cur.y + "px", opacity: prog(t, 3.7, 0.3), transform: `scale(${press ? 0.88 : 1})` });
+
+  let ripple = 0, rs = 0;
+  for (const s of [9.9, 16.0, 20.85, 22.15, 28.15]) {
+    if (t >= s && t < s + 0.45) { const k = (t - s) / 0.45; ripple = 0.8 * (1 - k); rs = 0.4 + k; }
+  }
+  set($("ripple"), { left: cur.x - 23 + "px", top: cur.y - 23 + "px", opacity: ripple, transform: `scale(${rs})` });
+}
+
+window.DURATION = 34;
+window.renderAt = renderAt;
+window.addEventListener("load", () => {
+  buildCursorPath();
+  renderAt(0);
+  window.__ready = true;
+  if (!location.search.includes("render")) {
+    const start = performance.now();
+    const loop = () => { renderAt(((performance.now() - start) / 1000) % window.DURATION); requestAnimationFrame(loop); };
+    requestAnimationFrame(loop);
+  }
+});
+</script>
+</body>
+</html>

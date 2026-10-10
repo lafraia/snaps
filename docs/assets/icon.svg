@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <linearGradient id="bg" x1="0.15" y1="0" x2="0.85" y2="1">
+      <stop offset="0" stop-color="#67E8F9"/>
+      <stop offset="0.45" stop-color="#3B82F6"/>
+      <stop offset="1" stop-color="#4338CA"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.25" cy="0.12" r="0.75">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="pane" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0.18"/>
+    </linearGradient>
+    <linearGradient id="rim" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0.35"/>
+    </linearGradient>
+    <clipPath id="body">
+      <rect x="100" y="100" width="824" height="824" rx="185"/>
+    </clipPath>
+    <clipPath id="paneClip">
+      <rect x="322" y="352" width="380" height="320" rx="44"/>
+    </clipPath>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="22"/>
+    </filter>
+    <filter id="iconShadow" x="-10%" y="-10%" width="120%" height="125%">
+      <feGaussianBlur stdDeviation="14"/>
+    </filter>
+  </defs>
+
+  <!-- Body -->
+  <rect x="100" y="112" width="824" height="824" rx="185" fill="#1E1B4B" opacity="0.35" filter="url(#iconShadow)"/>
+  <rect x="100" y="100" width="824" height="824" rx="185" fill="url(#bg)"/>
+  <g clip-path="url(#body)">
+    <rect x="100" y="100" width="824" height="824" fill="url(#glow)"/>
+  </g>
+
+  <!-- Glass snapshot card, slightly tilted -->
+  <g transform="rotate(-6 512 512)">
+    <rect x="322" y="372" width="380" height="320" rx="44" fill="#1E1B4B" opacity="0.35" filter="url(#shadow)"/>
+    <rect x="322" y="352" width="380" height="320" rx="44" fill="url(#pane)"/>
+    <g clip-path="url(#paneClip)">
+      <circle cx="604" cy="446" r="34" fill="#FFFFFF" opacity="0.92"/>
+      <path d="M322 672 L322 600 L428 492 L520 584 L572 536 L702 650 L702 672 Z" fill="#FFFFFF" opacity="0.85"/>
+    </g>
+    <rect x="322" y="352" width="380" height="320" rx="44" fill="none" stroke="url(#rim)" stroke-width="6"/>
+  </g>
+
+  <!-- Viewfinder brackets -->
+  <g fill="none" stroke="#FFFFFF" stroke-width="46" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M232 394 V316 A54 54 0 0 1 286 262 H364"/>
+    <path d="M660 262 H738 A54 54 0 0 1 792 316 V394"/>
+    <path d="M232 630 V708 A54 54 0 0 0 286 762 H364"/>
+    <path d="M660 762 H738 A54 54 0 0 0 792 708 V630"/>
+  </g>
+
+  <!-- Flash sparkle -->
+  <path d="M826 142 C830 170 838 178 866 182 C838 186 830 194 826 222 C822 194 814 186 786 182 C814 178 822 170 826 142 Z" fill="#FFFFFF" opacity="0.95"/>
+
+  <!-- Rim light -->
+  <rect x="102" y="102" width="820" height="820" rx="183" fill="none" stroke="#FFFFFF" stroke-opacity="0.28" stroke-width="4"/>
+</svg>

@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Snaps: screenshots that land on your clipboard</title>
+  <meta name="description" content="Snaps is a free, open source macOS menu bar app for screenshots. Capture an area, a window or the whole screen. It's instantly on your clipboard, with a floating glass preview you can drag anywhere.">
+  <meta name="theme-color" content="#0b1026">
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Snaps: screenshots that land on your clipboard">
+  <meta property="og:description" content="A free, open source macOS menu bar app for area, window and full-screen captures, with a Liquid Glass preview you can drag anywhere.">
+  <meta property="og:image" content="https://nearbycoder.github.io/snaps/assets/og.jpg">
+  <meta property="og:url" content="https://nearbycoder.github.io/snaps/">
+  <meta name="twitter:card" content="summary_large_image">
+  <style>
+    :root {
+      --bg: #0b1026;
+      --text: #f4f6ff;
+      --muted: rgba(228, 233, 255, 0.68);
+      --faint: rgba(228, 233, 255, 0.45);
+      --cyan: #67e8f9;
+      --blue: #3b82f6;
+      --indigo: #6366f1;
+      --pink: #f0abfc;
+      --glass: rgba(255, 255, 255, 0.06);
+      --glass-strong: rgba(255, 255, 255, 0.1);
+      --line: rgba(255, 255, 255, 0.12);
+      --radius: 24px;
+      --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Segoe UI", system-ui, sans-serif;
+      --rounded: ui-rounded, "SF Pro Rounded", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; color: var(--text); background: var(--bg); font-family: var(--font);
+      -webkit-font-smoothing: antialiased; line-height: 1.55; overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    img, video { display: block; max-width: 100%; }
+
+    /* Ambient background */
+    .ambient { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none;
+      background: linear-gradient(160deg, #0b1026, #10183a 50%, #170f3d); }
+    .ambient::after { content: ""; position: absolute; inset: 0;
+      background-image: radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1.3px); background-size: 30px 30px;
+      mask-image: linear-gradient(180deg, black, transparent 80%); }
+    .blob { position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.55; animation: drift 26s ease-in-out infinite alternate; }
+    .blob.a { width: 620px; height: 620px; left: -180px; top: -160px; background: #0891b2; }
+    .blob.b { width: 720px; height: 720px; right: -220px; top: 20vh; background: #4f46e5; animation-delay: -8s; }
+    .blob.c { width: 560px; height: 560px; left: 30vw; bottom: -280px; background: #7c3aed; opacity: 0.4; animation-delay: -14s; }
+    @keyframes drift { to { transform: translate(60px, 40px) scale(1.08); } }
+
+    .wrap { width: min(1160px, calc(100% - 48px)); margin: 0 auto; }
+
+    .glass {
+      background: linear-gradient(180deg, rgba(255,255,255,0.09), rgba(255,255,255,0.04));
+      border: 1px solid var(--line);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.12), 0 24px 60px rgba(3, 6, 25, 0.35);
+      -webkit-backdrop-filter: blur(24px) saturate(160%);
+      backdrop-filter: blur(24px) saturate(160%);
+    }
+
+    /* Nav */
+    nav { position: sticky; top: 14px; z-index: 10; margin-top: 14px; }
+    .nav-inner { display: flex; align-items: center; gap: 28px; padding: 10px 10px 10px 16px; border-radius: 999px; }
+    .brand { display: flex; align-items: center; gap: 10px; font: 800 20px var(--rounded); letter-spacing: -0.3px; }
+    .brand img { width: 32px; height: 32px; }
+    .nav-links { display: flex; gap: 24px; margin-left: auto; font-size: 15px; color: var(--muted); }
+    .nav-links a:hover { color: var(--text); }
+
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; height: 46px; padding: 0 22px; border-radius: 999px;
+      font: 700 16px var(--rounded); transition: transform .15s ease, box-shadow .15s ease, background .15s ease; white-space: nowrap; }
+    .btn:hover { transform: translateY(-1px); }
+    .btn svg { flex: none; }
+    .btn-primary { color: #06102b; background: linear-gradient(180deg, #ffffff, #dbe7ff);
+      box-shadow: 0 10px 30px rgba(103, 232, 249, 0.25), inset 0 -2px 0 rgba(6, 16, 43, 0.12); }
+    .btn-primary:hover { box-shadow: 0 14px 40px rgba(103, 232, 249, 0.38), inset 0 -2px 0 rgba(6, 16, 43, 0.12); }
+    .btn-ghost { color: var(--text); border: 1px solid var(--line); background: rgba(255,255,255,0.06); }
+    .btn-ghost:hover { background: rgba(255,255,255,0.1); }
+    .btn-sm { height: 40px; padding: 0 18px; font-size: 15px; }
+    .btn-lg { height: 56px; padding: 0 28px; font-size: 18px; }
+
+    /* Hero */
+    .hero { text-align: center; padding: 96px 0 48px; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 10px; padding: 8px 16px; border-radius: 999px; font: 600 14px var(--rounded); color: var(--muted); }
+    .eyebrow .dot { width: 8px; height: 8px; border-radius: 50%; background: #34d399; box-shadow: 0 0 10px #34d399; }
+    .hero-icon { width: 128px; height: 128px; margin: 34px auto 6px; filter: drop-shadow(0 24px 48px rgba(56, 189, 248, 0.35)); }
+    h1 { font: 800 clamp(44px, 7vw, 86px)/1.02 var(--rounded); letter-spacing: -0.035em; margin: 18px auto 0; max-width: 900px; }
+    .grad { background: linear-gradient(90deg, var(--cyan), #a5b4fc 55%, var(--pink)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .lede { font-size: clamp(18px, 2vw, 21px); color: var(--muted); max-width: 640px; margin: 22px auto 0; }
+    .cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 36px; }
+    .meta { margin-top: 18px; font-size: 14px; color: var(--faint); display: flex; gap: 8px 18px; justify-content: center; flex-wrap: wrap; }
+    .meta span { display: inline-flex; align-items: center; gap: 6px; }
+
+    /* Video */
+    .video-frame { margin: 64px auto 0; border-radius: 28px; padding: 10px; max-width: 1080px; }
+    .video-frame .chrome { display: flex; align-items: center; gap: 8px; padding: 6px 10px 12px; }
+    .video-frame .chrome i { width: 12px; height: 12px; border-radius: 50%; display: block; }
+    .video-frame .chrome i:nth-child(1) { background: #ff5f57; } .video-frame .chrome i:nth-child(2) { background: #febc2e; } .video-frame .chrome i:nth-child(3) { background: #28c840; }
+    .video-frame .chrome span { margin: 0 auto; font: 600 13px var(--rounded); color: var(--faint); transform: translateX(-24px); }
+    .video-frame video { width: 100%; border-radius: 18px; aspect-ratio: 16 / 9; background: #0e1430; }
+
+    /* Sections */
+    section { padding: 110px 0 0; }
+    .section-head { text-align: center; max-width: 680px; margin: 0 auto 48px; }
+    .kicker { font: 700 13px var(--rounded); letter-spacing: 0.22em; text-transform: uppercase; color: var(--cyan); }
+    h2 { font: 800 clamp(34px, 4.6vw, 54px)/1.08 var(--rounded); letter-spacing: -0.03em; margin: 12px 0 0; }
+    .section-head p { color: var(--muted); font-size: 18px; margin: 16px 0 0; }
+
+    /* Steps */
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .step { border-radius: var(--radius); padding: 28px; }
+    .step .num { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font: 800 15px var(--rounded);
+      background: linear-gradient(135deg, var(--cyan), var(--indigo)); color: #06102b; }
+    .step h3 { font: 700 22px var(--rounded); margin: 18px 0 8px; letter-spacing: -0.01em; }
+    .step p { margin: 0; color: var(--muted); }
+    .step .keys { margin-top: 20px; }
+
+    .keys { display: inline-flex; gap: 6px; }
+    kbd { min-width: 38px; height: 38px; padding: 0 10px; border-radius: 10px; display: inline-grid; place-items: center;
+      font: 700 17px var(--rounded); color: #10162f; background: linear-gradient(180deg, #ffffff, #e3e8f5);
+      box-shadow: 0 3px 0 #9aa3bf, 0 6px 14px rgba(0,0,0,0.3); }
+
+    /* Bento */
+    .bento { display: grid; grid-template-columns: repeat(6, 1fr); gap: 18px; }
+    .card { border-radius: var(--radius); padding: 28px; position: relative; overflow: hidden; }
+    .card h3 { font: 700 21px var(--rounded); margin: 16px 0 8px; letter-spacing: -0.01em; }
+    .card p { margin: 0; color: var(--muted); font-size: 16px; }
+    .card .ico { width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center;
+      background: linear-gradient(135deg, rgba(103,232,249,0.22), rgba(99,102,241,0.22)); border: 1px solid rgba(255,255,255,0.14); }
+    .span-3 { grid-column: span 3; } .span-2 { grid-column: span 2; } .span-4 { grid-column: span 4; }
+    .modes { display: flex; gap: 10px; margin-top: 22px; flex-wrap: wrap; }
+    .mode { flex: 1; min-width: 110px; border-radius: 16px; padding: 16px; text-align: center; font: 700 14px var(--rounded);
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); }
+    .mode svg { display: block; margin: 0 auto 8px; }
+    .mode small { display: block; font-weight: 600; color: var(--faint); margin-top: 2px; }
+
+    .corner-demo { margin-top: 22px; width: 180px; height: 112px; border-radius: 14px; border: 1.5px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.04); position: relative; }
+    .corner-demo i { position: absolute; width: 50px; height: 30px; border-radius: 7px; background: rgba(255,255,255,0.14); }
+    .corner-demo i.on { background: linear-gradient(135deg, var(--cyan), var(--indigo)); box-shadow: 0 0 20px rgba(103,232,249,0.4); }
+    .corner-demo .tl { left: 8px; top: 8px; } .corner-demo .tr { right: 8px; top: 8px; } .corner-demo .bl { left: 8px; bottom: 8px; } .corner-demo .br { right: 8px; bottom: 8px; }
+    .corner-demo i { animation: corner 8s infinite; }
+    .corner-demo .bl { animation-delay: 0s; } .corner-demo .tl { animation-delay: 2s; } .corner-demo .tr { animation-delay: 4s; } .corner-demo .br { animation-delay: 6s; }
+    @keyframes corner { 0%, 22% { background: linear-gradient(135deg, var(--cyan), var(--indigo)); box-shadow: 0 0 20px rgba(103,232,249,0.4); } 25%, 100% { background: rgba(255,255,255,0.14); box-shadow: none; } }
+
+    .displays { display: flex; gap: 10px; align-items: flex-end; margin-top: 22px; }
+    .display { border-radius: 10px; border: 1.5px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.04); position: relative; }
+    .display.one { width: 150px; height: 94px; } .display.two { width: 120px; height: 76px; }
+    .display .p { position: absolute; left: 7px; bottom: 7px; width: 38px; height: 24px; border-radius: 6px; background: linear-gradient(135deg, var(--cyan), var(--indigo)); }
+    .display.one .p { animation: hopA 6s infinite; } .display.two .p { animation: hopB 6s infinite; }
+    @keyframes hopA { 0%, 45% { opacity: 1; transform: none; } 50%, 95% { opacity: 0; transform: translateX(-8px); } 100% { opacity: 1; } }
+    @keyframes hopB { 0%, 45% { opacity: 0; transform: translateX(-8px); } 50%, 95% { opacity: 1; transform: none; } 100% { opacity: 0; } }
+
+    .mini { margin-top: 22px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .toast-demo { display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px; border-radius: 999px; font: 700 14px var(--rounded);
+      background: rgba(52, 211, 153, 0.14); border: 1px solid rgba(52, 211, 153, 0.35); color: #a7f3d0; }
+    .drag-demo { position: relative; width: 150px; height: 92px; margin-top: 22px; }
+    .drag-demo .card-mini { position: absolute; left: 0; top: 0; width: 120px; height: 76px; border-radius: 14px; padding: 5px;
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.25); animation: dragmini 4s ease-in-out infinite; }
+    .drag-demo .card-mini div { width: 100%; height: 100%; border-radius: 10px; background: linear-gradient(135deg, #38bdf8, #6366f1); }
+    .drag-demo svg { position: absolute; left: 70px; top: 44px; animation: dragmini 4s ease-in-out infinite; }
+    @keyframes dragmini { 0%, 15% { transform: none; } 55%, 70% { transform: translate(28px, 10px) rotate(-3deg); } 100% { transform: none; } }
+    .strip-demo { display: flex; gap: 8px; margin-top: 22px; padding: 8px; border-radius: 14px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); width: fit-content; }
+    .strip-demo i { width: 44px; height: 32px; border-radius: 7px; display: block; }
+    .private-list { list-style: none; padding: 0; margin: 18px 0 0; display: grid; gap: 8px; color: var(--muted); }
+    .private-list li { display: flex; gap: 10px; align-items: center; }
+    .private-list li::before { content: ""; width: 18px; height: 18px; flex: none; border-radius: 50%;
+      background: #34d399 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2306102b' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center/12px no-repeat; }
+
+    /* Shortcuts */
+    .shortcuts { border-radius: var(--radius); padding: 10px; max-width: 760px; margin: 0 auto; }
+    .sc-row { display: flex; align-items: center; gap: 18px; padding: 18px 20px; border-radius: 18px; }
+    .sc-row + .sc-row { border-top: 1px solid rgba(255,255,255,0.07); }
+    .sc-row .what { flex: 1; }
+    .sc-row b { font: 700 18px var(--rounded); display: block; }
+    .sc-row span { color: var(--muted); font-size: 15px; }
+    .note { text-align: center; color: var(--faint); font-size: 15px; margin-top: 18px; }
+
+    /* Free */
+    .free { border-radius: 36px; padding: 72px 32px; text-align: center; position: relative; overflow: hidden; }
+    .free::before { content: ""; position: absolute; inset: -40%; background: conic-gradient(from 180deg, rgba(103,232,249,0.18), rgba(99,102,241,0.2), rgba(240,171,252,0.16), rgba(103,232,249,0.18)); filter: blur(60px); z-index: -1; animation: spin 30s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .free h2 { font-size: clamp(40px, 6vw, 72px); }
+    .free p { color: var(--muted); font-size: 19px; max-width: 640px; margin: 18px auto 0; }
+    .chips { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 30px; }
+    .chip { padding: 10px 18px; border-radius: 999px; font: 600 16px var(--rounded); color: var(--muted); background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.14); }
+    .chip b { color: var(--text); }
+
+    /* FAQ */
+    .faq { max-width: 760px; margin: 0 auto; display: grid; gap: 12px; }
+    details { border-radius: 18px; padding: 0 22px; }
+    summary { cursor: pointer; list-style: none; padding: 20px 0; font: 700 18px var(--rounded); display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: "+"; font: 400 26px var(--rounded); color: var(--faint); transition: transform .2s ease; }
+    details[open] summary::after { transform: rotate(45deg); }
+    details p { margin: 0 0 20px; color: var(--muted); }
+    details code { font: 600 14px ui-monospace, SFMono-Regular, Menlo, monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 6px; }
+
+    /* Final CTA + footer */
+    .final { text-align: center; padding: 120px 0 40px; }
+    .final img { width: 96px; height: 96px; margin: 0 auto 20px; filter: drop-shadow(0 20px 40px rgba(56,189,248,0.3)); }
+    footer { border-top: 1px solid rgba(255,255,255,0.08); margin-top: 60px; padding: 28px 0 40px; color: var(--faint); font-size: 14px; }
+    footer .wrap { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+    footer .links { margin-left: auto; display: flex; gap: 20px; }
+    footer a:hover { color: var(--text); }
+
+    /* Reveal on scroll */
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity .8s ease, transform .8s cubic-bezier(.2,.8,.2,1); }
+    .reveal.in { opacity: 1; transform: none; }
+
+    @media (max-width: 900px) {
+      .nav-links { display: none; }
+      .nav-inner .btn { margin-left: auto; }
+      .steps { grid-template-columns: 1fr; }
+      .bento { grid-template-columns: 1fr; }
+      .span-2, .span-3, .span-4 { grid-column: auto; }
+      .hero { padding-top: 64px; }
+      .sc-row { flex-wrap: wrap; }
+      footer .links { margin-left: 0; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      .reveal { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient" aria-hidden="true"><div class="blob a"></div><div class="blob b"></div><div class="blob c"></div></div>
+
+  <nav class="wrap">
+    <div class="nav-inner glass">
+      <a class="brand" href="#top"><img src="assets/icon.svg" alt="">Snaps</a>
+      <div class="nav-links">
+        <a href="#how">How it works</a>
+        <a href="#features">Features</a>
+        <a href="#shortcuts">Shortcuts</a>
+        <a href="#faq">FAQ</a>
+        <a href="https://github.com/nearbycoder/snaps">GitHub</a>
+      </div>
+      <a class="btn btn-primary btn-sm js-download" href="https://github.com/nearbycoder/snaps/releases/latest">Download</a>
+    </div>
+  </nav>
+
+  <header class="hero wrap" id="top">
+    <div class="eyebrow glass"><span class="dot"></span>Free &amp; open source · macOS 26+</div>
+    <img class="hero-icon" src="assets/icon.svg" alt="Snaps app icon">
+    <h1>Screenshots that land on <span class="grad">your clipboard.</span></h1>
+    <p class="lede">Snaps is a tiny menu bar app for macOS. Press a shortcut, grab an area, a window or the whole screen, then paste it anywhere. A glass preview floats in the corner so you can drag it straight into any app.</p>
+    <div class="cta">
+      <a class="btn btn-primary btn-lg js-download" href="https://github.com/nearbycoder/snaps/releases/latest">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10.5l5 5 5-5M5 20h14"/></svg>
+        <span class="js-download-label">Download for macOS</span>
+      </a>
+      <a class="btn btn-ghost btn-lg" href="https://github.com/nearbycoder/snaps">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z"/></svg>
+        View on GitHub
+      </a>
+    </div>
+    <div class="meta">
+      <span>✓ 100% free</span><span>✓ Signed &amp; notarized</span><span>✓ Apple silicon &amp; Intel</span><span class="js-version">✓ ~2 MB</span>
+    </div>
+
+    <div class="video-frame glass reveal">
+      <div class="chrome"><i></i><i></i><i></i><span>Snaps in 30 seconds</span></div>
+      <video id="promo" src="assets/promo.mp4" poster="assets/promo-poster.jpg" autoplay muted loop playsinline controls preload="metadata"
+        aria-label="Promo video showing an area capture, pasting into a chat, dragging a window capture, choosing the preview corner, and the gallery"></video>
+    </div>
+  </header>
+
+  <section id="how" class="wrap">
+    <div class="section-head reveal">
+      <div class="kicker">How it works</div>
+      <h2>Capture. Paste. Done.</h2>
+      <p>No windows to manage and no files to dig out of your Desktop. Snaps stays out of the way until you need it.</p>
+    </div>
+    <div class="steps">
+      <div class="step glass reveal">
+        <div class="num">1</div>
+        <h3>Press a shortcut</h3>
+        <p>Drag over any area, click a window, or grab the whole display under your cursor.</p>
+        <div class="keys"><kbd>⌃</kbd><kbd>⇧</kbd><kbd>4</kbd></div>
+      </div>
+      <div class="step glass reveal">
+        <div class="num">2</div>
+        <h3>It's on your clipboard</h3>
+        <p>Every capture is copied the moment you take it. Paste it into Slack, Messages, Figma, Docs, anywhere.</p>
+        <div class="keys"><kbd>⌘</kbd><kbd>V</kbd></div>
+      </div>
+      <div class="step glass reveal">
+        <div class="num">3</div>
+        <h3>Or drag the preview</h3>
+        <p>A glass thumbnail floats in your corner. Drag it into any app or folder, or hover for copy, save, pin and open.</p>
+        <div class="keys"><kbd>↖︎ drag</kbd></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="features" class="wrap">
+    <div class="section-head reveal">
+      <div class="kicker">Features</div>
+      <h2>Small app. Thoughtful details.</h2>
+      <p>Built natively for macOS with the Liquid Glass look, so it feels at home on your Mac.</p>
+    </div>
+    <div class="bento">
+      <div class="card glass span-4 reveal">
+        <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a5f3fc" stroke-width="2.2" stroke-linecap="round"><path d="M3 8V5.5A2.5 2.5 0 0 1 5.5 3H8M16 3h2.5A2.5 2.5 0 0 1 21 5.5V8M3 16v2.5A2.5 2.5 0 0 0 5.5 21H8M16 21h2.5a2.5 2.5 0 0 0 2.5-2.5V16"/></svg></div>
+        <h3>Three ways to capture</h3>
+        <p>Uses the native macOS selection UI, so it's fast, precise and familiar.</p>
+        <div class="modes">
+          <div class="mode"><svg width="30" height="26" viewBox="0 0 28 24" fill="none" stroke="white" stroke-width="2" stroke-dasharray="4 3"><rect x="2" y="2" width="24" height="20" rx="4"/></svg>Area<small>⌃⇧4</small></div>
+          <div class="mode"><svg width="30" height="26" viewBox="0 0 28 24" fill="none" stroke="white" stroke-width="2"><rect x="2" y="2" width="24" height="20" rx="4"/><path d="M2 8h24"/></svg>Window<small>⌃⇧5</small></div>
+          <div class="mode"><svg width="30" height="26" viewBox="0 0 28 24" fill="none" stroke="white" stroke-width="2"><rect x="2" y="2" width="24" height="15" rx="3"/><path d="M10 22h8M14 17v5"/></svg>Full Screen<small>⌃⇧3</small></div>
+        </div>
+      </div>
+      <div class="card glass span-2 reveal">
+        <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a5f3fc" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="3" width="8" height="4" rx="1.5"/><path d="M16 5h1.5A2.5 2.5 0 0 1 20 7.5v11a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 18.5v-11A2.5 2.5 0 0 1 6.5 5H8"/><path d="M9 14l2 2 4-4.5"/></svg></div>
+        <h3>Instantly copied</h3>
+        <p>No save dialogs. Your capture is on the clipboard before you let go of the mouse.</p>
+        <div class="mini"><span class="toast-demo">✓ Copied</span><span class="keys"><kbd>⌘</kbd><kbd>V</kbd></span></div>
+      </div>
+      <div class="card glass span-2 reveal">
+        <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a5f3fc" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="12" height="9" rx="2"/><path d="M13 21l-1.5-7.5L19 15l-3 1.5z"/></svg></div>
+        <h3>Drag &amp; drop preview</h3>
+        <p>A floating glass thumbnail you can drag into any app. It tidies itself away when you're done.</p>
+        <div class="drag-demo" aria-hidden="true"><div class="card-mini"><div></div></div>
+          <svg width="22" height="26" viewBox="0 0 17 20"><path d="M1.5 1.2v15.6l3.9-3.7 2.6 5.9 2.6-1.1-2.5-5.8h5.4z" fill="black" stroke="white" stroke-width="1.3" stroke-linejoin="round"/></svg></div>
+      </div>
+      <div class="card glass span-2 reveal">
+        <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a5f3fc" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="7" width="15" height="13" rx="2.5"/><path d="M7 4h11.5A2.5 2.5 0 0 1 21 6.5V16"/></svg></div>
+        <h3>Gallery up top</h3>
+        <p>Press <b>⌃⇧G</b> and your recent captures drop down across the top of the screen. Click to copy, drag to share.</p>
+        <div class="strip-demo" aria-hidden="true"><i style="background:linear-gradient(135deg,#f8fafc,#c7d2fe)"></i><i style="background:linear-gradient(135deg,#38bdf8,#2563eb)"></i><i style="background:#0f172a;border:1px solid rgba(255,255,255,.15)"></i><i style="background:linear-gradient(90deg,#0ea5e9,#a855f7,#f59e0b)"></i></div>
+      </div>
+      <div class="card glass span-2 reveal">
+        <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a5f3fc" stroke-width="2.2"><rect x="3" y="5" width="18" height="14" rx="3"/><rect x="5.5" y="13" width="6" height="3.5" rx="1" fill="#a5f3fc" stroke="none"/></svg></div>
+        <h3>Your corner</h3>
+        <p>Previews appear in whichever corner you like, set with one click from the menu bar.</p>
+        <div class="corner-demo" aria-hidden="true"><i class="tl"></i><i class="tr"></i><i class="bl"></i><i class="br"></i></div>
+      </div>
+      <div class="card glass span-3 reveal">
+        <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a5f3fc" stroke-width="2.2" stroke-linecap="round"><rect x="2" y="5" width="12" height="9" rx="2"/><rect x="15" y="8" width="7" height="6" rx="1.5"/><path d="M6 18h4M17.5 17h2"/></svg></div>
+        <h3>Follows you across displays</h3>
+        <p>Move your cursor to another monitor and your previews hop over with it.</p>
+        <div class="displays" aria-hidden="true"><div class="display one"><div class="p"></div></div><div class="display two"><div class="p"></div></div></div>
+      </div>
+      <div class="card glass span-3 reveal">
+        <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a5f3fc" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5.5c0 4.5-3 8-7 9.5-4-1.5-7-5-7-9.5V6z"/><path d="M9 12l2 2 4-4.5"/></svg></div>
+        <h3>Private by design</h3>
+        <ul class="private-list">
+          <li>Never connects to the internet</li>
+          <li>No account, analytics or tracking</li>
+          <li>Captures stay on your Mac</li>
+          <li>Open source, so you can read every line</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="shortcuts" class="wrap">
+    <div class="section-head reveal">
+      <div class="kicker">Shortcuts</div>
+      <h2>Muscle memory, your way.</h2>
+      <p>Sensible defaults that don't clash with the built-in macOS screenshot keys. Change any of them in Settings.</p>
+    </div>
+    <div class="shortcuts glass reveal">
+      <div class="sc-row"><div class="what"><b>Area</b><span>Drag to select any region</span></div><div class="keys"><kbd>⌃</kbd><kbd>⇧</kbd><kbd>4</kbd></div></div>
+      <div class="sc-row"><div class="what"><b>Window</b><span>Click any window to capture it</span></div><div class="keys"><kbd>⌃</kbd><kbd>⇧</kbd><kbd>5</kbd></div></div>
+      <div class="sc-row"><div class="what"><b>Full Screen</b><span>The display under your cursor</span></div><div class="keys"><kbd>⌃</kbd><kbd>⇧</kbd><kbd>3</kbd></div></div>
+      <div class="sc-row"><div class="what"><b>Gallery</b><span>Recent captures across the top of the screen</span></div><div class="keys"><kbd>⌃</kbd><kbd>⇧</kbd><kbd>G</kbd></div></div>
+    </div>
+    <p class="note reveal">⌃ Control · ⇧ Shift. Everything is also one click away in the menu bar.</p>
+  </section>
+
+  <section class="wrap">
+    <div class="free glass reveal">
+      <div class="kicker">The fine print</div>
+      <h2><span class="grad">Totally free.</span> Forever.</h2>
+      <p>Snaps is a free, MIT-licensed open source project. There's no trial, no pro tier and no catch. Download it, use it, fork it.</p>
+      <div class="chips">
+        <div class="chip"><b>No</b> account</div>
+        <div class="chip"><b>No</b> subscription</div>
+        <div class="chip"><b>No</b> ads</div>
+        <div class="chip"><b>No</b> tracking</div>
+        <div class="chip"><b>Open</b> source</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" class="wrap">
+    <div class="section-head reveal">
+      <div class="kicker">FAQ</div>
+      <h2>Questions, answered.</h2>
+    </div>
+    <div class="faq">
+      <details class="glass reveal"><summary>Is it really free?</summary>
+        <p>Yes. Snaps is free and open source under the MIT license. There are no paid features, no accounts and nothing to upgrade to.</p></details>
+      <details class="glass reveal"><summary>Which Macs does it run on?</summary>
+        <p>Any Mac running macOS 26 or later, Apple silicon or Intel. It's a universal app of about 2 MB.</p></details>
+      <details class="glass reveal"><summary>Why does it ask for Screen Recording permission?</summary>
+        <p>macOS requires it for any app that captures the screen. Allow Snaps in System Settings → Privacy &amp; Security → Screen &amp; System Audio Recording, then relaunch it. Snaps never records video or sends anything anywhere.</p></details>
+      <details class="glass reveal"><summary>Is it safe to install?</summary>
+        <p>Every release is signed with an Apple Developer ID and notarized by Apple, so it opens without Gatekeeper warnings. The full source is on GitHub if you'd like to check it, or build it yourself.</p></details>
+      <details class="glass reveal"><summary>Where do my captures go?</summary>
+        <p>To your clipboard, always. Unsaved captures live in a private cache for 7 days so the gallery can show them. Turn on <b>Save to folder</b> in Settings to keep a copy on your Desktop or any folder you choose.</p></details>
+      <details class="glass reveal"><summary>Can I change the shortcuts or where previews appear?</summary>
+        <p>Yes. Open Settings from the menu bar icon to record new shortcuts, pick a preview corner, set how long previews stay, and toggle the capture sound, window shadows and launch at login.</p></details>
+    </div>
+  </section>
+
+  <section class="final wrap reveal">
+    <img src="assets/icon.svg" alt="">
+    <h2>Give your screenshots a shortcut.</h2>
+    <div class="cta">
+      <a class="btn btn-primary btn-lg js-download" href="https://github.com/nearbycoder/snaps/releases/latest">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10.5l5 5 5-5M5 20h14"/></svg>
+        <span class="js-download-label">Download for macOS</span>
+      </a>
+    </div>
+    <p class="meta">Free · macOS 26+ · Signed &amp; notarized</p>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <a class="brand" href="#top" style="font-size:16px"><img src="assets/icon.svg" alt="" style="width:24px;height:24px">Snaps</a>
+      <span>Made by Josh Hamilton · MIT License</span>
+      <div class="links">
+        <a href="https://github.com/nearbycoder/snaps">GitHub</a>
+        <a href="https://github.com/nearbycoder/snaps/releases">Releases</a>
+        <a href="https://github.com/nearbycoder/snaps/issues">Feedback</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Point download buttons straight at the latest DMG.
+    fetch("https://api.github.com/repos/nearbycoder/snaps/releases/latest")
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then((release) => {
+        const dmg = (release.assets || []).find((a) => a.name.endsWith(".dmg"));
+        if (!dmg) return;
+        const version = release.tag_name.replace(/^v/, "");
+        document.querySelectorAll(".js-download").forEach((a) => (a.href = dmg.browser_download_url));
+        document.querySelectorAll(".js-download-label").forEach((s) => (s.textContent = `Download Snaps ${version}`));
+        const size = document.querySelector(".js-version");
+        if (size) size.textContent = `✓ v${version} · ${(dmg.size / 1e6).toFixed(1)} MB`;
+      })
+      .catch(() => {});
+
+    // Fade sections in as they scroll into view.
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+    }, { threshold: 0.12 });
+    document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+
+    // Respect reduced motion for the promo video.
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      const v = document.getElementById("promo");
+      v.removeAttribute("autoplay"); v.pause();
+    }
+  </script>
+</body>
+</html>

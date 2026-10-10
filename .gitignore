@@ -4,3 +4,5 @@ build/
 *.xcodeproj/
 xcuserdata/
 .DS_Store
+promo/node_modules/
+promo/stills/
