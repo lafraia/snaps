@@ -107,6 +107,7 @@ struct SettingsView: View {
                             .controlSize(.small)
                     }
                 }
+                SettingToggle("Open in the editor", isOn: $settings.openEditorAfterCapture)
                 Divider().opacity(0.5)
                 SettingToggle("Play capture sound", isOn: $settings.playSound)
                 SettingToggle("Include window shadow", isOn: $settings.includeWindowShadow)
@@ -312,9 +313,11 @@ final class ShortcutRecorderModel: ObservableObject {
 }
 
 struct VisualEffectBackground: NSViewRepresentable {
+    var material: NSVisualEffectView.Material = .sidebar
+
     func makeNSView(context: Context) -> NSVisualEffectView {
         let view = NSVisualEffectView()
-        view.material = .sidebar
+        view.material = material
         view.blendingMode = .behindWindow
         view.state = .active
         return view
