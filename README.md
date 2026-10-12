@@ -43,7 +43,7 @@ Change them in **Settings → Shortcuts**: click a shortcut and type a new combo
 - Follows your cursor between displays: move to another monitor and the previews hop to that display's corner. They stay put while a mouse button is held, so you can drag one across.
 - **Drag** it into Finder, Slack, Mail, a browser, and so on. It dismisses itself after a successful drop.
 - **Hover** to reveal buttons for close, pin (keeps it on screen), annotate, copy again, save / show in Finder, and open.
-- **Double-click** to open the image in Preview.
+- **Double-click** to open it in the editor.
 - Auto-dismisses after 5, 10 or 20 seconds, or stays until you close it.
 
 ## The gallery
@@ -59,7 +59,7 @@ The gallery keeps your last 60 captures. Unsaved captures are cleaned up after 7
 
 ## Annotating
 
-Click the pencil on a preview or a gallery card to open the capture in the editor. To open every capture there automatically, turn on **Settings → After Capture → Open in the editor**.
+Double-click a preview, or click the pencil on a preview or a gallery card, to open the capture in the editor. It starts with the arrow selected. To open every capture there automatically, turn on **Settings → After Capture → Open in the editor**.
 
 | Tool | Key | How |
 | --- | --- | --- |

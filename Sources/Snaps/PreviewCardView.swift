@@ -33,7 +33,7 @@ struct PreviewCardView: View {
                 inset: PreviewController.padding,
                 onHover: actions.hover,
                 onClick: nil,
-                onDoubleClick: actions.open,
+                onDoubleClick: actions.annotate,
                 onDragStart: actions.dragStarted,
                 onDragEnd: actions.dragEnded
             )

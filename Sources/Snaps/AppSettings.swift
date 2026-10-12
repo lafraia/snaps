@@ -83,7 +83,7 @@ enum PreviewDuration: Int, CaseIterable, Identifiable {
     case forever = 0
 
     var id: Int { rawValue }
-    var title: String { self == .forever ? "Until closed" : "\(rawValue)s" }
+    var title: String { self == .forever ? "Until closed" : "\(rawValue) seconds" }
     var interval: TimeInterval? { self == .forever ? nil : TimeInterval(rawValue) }
 }
 
