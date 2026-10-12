@@ -232,7 +232,7 @@ struct GalleryCard: View {
                     inset: 0,
                     onHover: { model.isHovering = $0 },
                     onClick: copy,
-                    onDoubleClick: { NSWorkspace.shared.open(item.url) },
+                    onDoubleClick: { onAnnotate(item) },
                     onDragStart: {},
                     onDragEnd: { _ in }
                 )

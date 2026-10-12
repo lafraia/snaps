@@ -50,7 +50,7 @@ Change them in **Settings → Shortcuts**: click a shortcut and type a new combo
 
 Press ⌃⇧G, or click **Gallery** in the menu bar popover. A glass strip drops down across the top of the screen, over the menu bar, with your recent captures (newest first).
 
-- **Click** a capture to copy it. **Drag** it into any app. **Double-click** to open it.
+- **Click** a capture to copy it. **Drag** it into any app. **Double-click** to open it in the editor.
 - **Hover** for remove, annotate, copy and save / show in Finder.
 - Press **Esc**, click outside, or press the shortcut again to close it.
 - Like the previews, it moves to whichever display your cursor is on.
@@ -59,7 +59,7 @@ The gallery keeps your last 60 captures. Unsaved captures are cleaned up after 7
 
 ## Annotating
 
-Double-click a preview, or click the pencil on a preview or a gallery card, to open the capture in the editor. It starts with the arrow selected. To open every capture there automatically, turn on **Settings → After Capture → Open in the editor**.
+Double-click a preview or a gallery card, or click its pencil, to open the capture in the editor. It starts with the arrow selected. To open every capture there automatically, turn on **Settings → After Capture → Open in the editor**.
 
 | Tool | Key | How |
 | --- | --- | --- |
